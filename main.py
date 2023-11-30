@@ -1,6 +1,8 @@
 from colorama import Fore, Back, Style
 import os
 
+from adafruit_I2C_lib.py import I2C
+
 #==========================================================================================
 def displayBasicMenu():
     os.system('clear')
@@ -19,6 +21,10 @@ def displayBasicMenu():
     print ("Exit - 0")
 
 #==========================================================================================
+def stopAllMotors():
+    RPI2ARDcommand = 1
+
+
 
 #==========================================================================================
 
@@ -27,8 +33,13 @@ def displayBasicMenu():
 done = False
 while not done:
     displayBasicMenu()
-    userCommand = input()
+    userCommand = input(">>")
     if userCommand == "0":
         done = True
+
+    if userCommand == "1":
+        stopAllMotors()
+
+
 
 #==========================================================================================
