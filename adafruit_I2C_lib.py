@@ -57,7 +57,8 @@ class I2C:
 		while True:
 			try:
 				result = self.bus.read_byte_data(self.address, reg)
-				logger.debug('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
+#				logger.debug('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
+				print('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
 				return result
 			except IOError:
 #			except IOError, err:
