@@ -3,9 +3,12 @@
 #  Adafruit i2c interface plus bug fix
 # https://learn.adafruit.com/working-with-i2c-devices
 # https://arduino.stackexchange.com/questions/81245/reading-i2c-registers-as-slave-device
+# https://docs.python.org/2/tutorial/errors.html#user-defined-exceptions
 #
 ############################################################################################
 import smbus
+import time
+
 class I2C:
 
 	def __init__(self, address, bus=smbus.SMBus(1)):
@@ -33,7 +36,7 @@ class I2C:
 				break
 #			except IOError, err:
 			except IOError:
-				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+				print('Error %d, %s accessing 0x%02X: Check your I2C address'% (err.errno, err.strerror, self.address))
 				time.sleep(0.001)
 
 	def writeList(self, reg, list):
@@ -44,7 +47,8 @@ class I2C:
 				break
 			except IOError:
 #			except IOError, err:
-				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+#				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+				print('Error %d, %s accessing 0x%02X: Check your I2C address'%(err.errno, err.strerror, self.address))
 				time.sleep(0.001)
 
 	def readU8(self, reg):
@@ -56,7 +60,8 @@ class I2C:
 				return result
 			except IOError:
 #			except IOError, err:
-				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+#				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+				print('Error %d, %s accessing 0x%02X: Check your I2C address'%(err.errno, err.strerror, self.address))
 				time.sleep(0.001)
 
 	def readS8(self, reg):
@@ -64,14 +69,16 @@ class I2C:
 		while True:
 			try:
 				result = self.bus.read_byte_data(self.address, reg)
-				logger.debug('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
+#				logger.debug('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
+				print('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X'% (self.address, result & 0xFF, reg))
 				if (result > 127):
 					return result - 256
 				else:
 					return result
 			except IOError:
 #			except IOError, err:
-				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+#				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+				print('Error %d, %s accessing 0x%02X: Check your I2C address'% (err.errno, err.strerror, self.address))
 				time.sleep(0.001)
 
 	def readU16(self, reg):
@@ -80,15 +87,17 @@ class I2C:
 			try:
 				hibyte = self.bus.read_byte_data(self.address, reg)
 				result = (hibyte << 8) + self.bus.read_byte_data(self.address, reg+1)
-				logger.debug('I2C: Device 0x%02X returned 0x%04X from reg 0x%02X', self.address, result & 0xFFFF, reg)
+#				# logger.debug('I2C: Device 0x%02X returned 0x%04X from reg 0x%02X', self.address, result & 0xFFFF, reg)
+				print('I2C: Device 0x%02X returned 0x%04X from reg 0x%02X'%( self.address, result & 0xFFFF, reg))
 				if result == 0x7FFF or result == 0x8000:
-					logger.critical('I2C read max value')
+					print('I2C read max value')
 					time.sleep(0.001)
 				else:
 					return result
 			except IOError:
 #			except IOError, err:
-				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+#				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+				print('Error %d, %s accessing 0x%02X: Check your I2C address' % ( err.errno, err.strerror, self.address))
 				time.sleep(0.001)
 
 	def readS16(self, reg):
@@ -99,15 +108,16 @@ class I2C:
 				if (hibyte > 127):
 					hibyte -= 256
 				result = (hibyte << 8) + self.bus.read_byte_data(self.address, reg+1)
-				logger.debug('I2C: Device 0x%02X returned 0x%04X from reg 0x%02X', self.address, result & 0xFFFF, reg)
+				print('I2C: Device 0x%02X returned 0x%04X from reg 0x%02X', self.address, result & 0xFFFF, reg)
 				if result == 0x7FFF or result == 0x8000:
-					logger.critical('I2C read max value')
+					print('I2C read max value')
 					time.sleep(0.001)
 				else:
 					return result
 			except IOError:
 #			except IOError, err:
-				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+#				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
+				print('Error %d, %s accessing 0x%02X: Check your I2C address' %(err.errno, err.strerror, self.address))
 				time.sleep(0.001)
 				
 	def readList(self, reg, length):
