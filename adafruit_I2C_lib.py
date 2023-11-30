@@ -32,7 +32,8 @@ class I2C:
 		while True:
 			try:
 				self.bus.write_byte_data(self.address, reg, value)
-				logger.debug('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
+#				logger.debug('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
+				print('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
 				break
 #			except IOError, err:
 			except IOError:
