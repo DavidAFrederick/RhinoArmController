@@ -3,7 +3,12 @@ import os
 import smbus
 import time
 import sys
+import logging
 from adafruit_I2C_lib import I2C
+
+
+address = 0x08
+bus = I2C(address)
 
 #==========================================================================================
 def displayBasicMenu():
@@ -39,20 +44,22 @@ def stopAllMotors():
 
 #=(Main)===================================================================================
 
-address = 0x08
-bus = I2C(address)
+def main():
+    logging.basicConfig(filename='python_app.log')
 
+    done = False
+    while not done:
+        displayBasicMenu()
+        userCommand = input(">>")
+        if (userCommand == "0") or (userCommand == "q"):
+            done = True
 
-done = False
-while not done:
-    displayBasicMenu()
-    userCommand = input(">>")
-    if (userCommand == "0") or (userCommand == "q"):
-        done = True
+        if userCommand == "1":
+            stopAllMotors()
 
-    if userCommand == "1":
-        stopAllMotors()
-
+if __name__ == '__main__':
+    main()
+#==========================================================================================
 
 
 #==========================================================================================
