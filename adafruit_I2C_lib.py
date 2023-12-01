@@ -37,7 +37,7 @@ class I2C:
             try:
                 self.bus.write_byte_data(self.address, reg, value)
                 #logger.debug('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
-                logging.debug('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
+                # logging.debug('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
                 # print('I2C: Wrote 0x%02X to register 0x%02X', value, reg)
                 break
 #			except IOError, err:
@@ -54,7 +54,7 @@ class I2C:
             except IOError:
 #			except IOError, err:
 #				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
-                print('Error %d, %s accessing 0x%02X: Check your I2C address'%(err.errno, err.strerror, self.address))
+                # print('Error %d, %s accessing 0x%02X: Check your I2C address'%(err.errno, err.strerror, self.address))
                 time.sleep(0.001)
 
     def readU8(self, reg):
@@ -62,13 +62,13 @@ class I2C:
         while True:
             try:
                 result = self.bus.read_byte_data(self.address, reg)
-                logging.debug('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
-                print('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
+                # logging.debug('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
+                # print('I2C: Device 0x%02X returned 0x%02X from reg 0x%02X', self.address, result & 0xFF, reg)
                 return result
             except IOError:
 #			except IOError, err:
 #				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
-                print('Error %d, %s accessing 0x%02X: Check your I2C address'%(err.errno, err.strerror, self.address))
+                # print('Error %d, %s accessing 0x%02X: Check your I2C address'%(err.errno, err.strerror, self.address))
                 time.sleep(0.001)
 
     def readS8(self, reg):
@@ -131,13 +131,19 @@ class I2C:
         "Reads a a byte array value from the I2C device"
         while True:
             try:
-                result = self.bus.read_i2c_block_data(self.address, reg, length)
-#				logger.debug('I2C: Device 0x%02X from reg 0x%02X', self.address, reg)
+                result = self.bus.read_i2c_block_data(self.address, reg, length)                
+                # result = self.bus.read_block_data(self.address, reg)                
+                # result = self.bus.read_block_data(self.address, reg)
+                print ("result")
+                
+#				logging.debug('I2C: Device 0x%02X from reg 0x%02X', self.address, reg)
 #				print('I2C: Device 0x%02X from reg 0x%02X', self.address, reg)
-                print('Received data', reg, result)
+                # print('Received data', reg, result)
                 return result
             except IOError:
+                logging.exception('Error')
+                print ("ERROR--")
 #			except IOError, err:
 #				logger.exception('Error %d, %s accessing 0x%02X: Check your I2C address', err.errno, err.strerror, self.address)
-                print('Error %d, %s accessing 0x%02X: Check your I2C address'% (err.errno, err.strerror, self.address))
+                # print('Error %d, %s accessing 0x%02X: Check your I2C address'% (err.errno, err.strerror, self.address))
                 time.sleep(0.001)
