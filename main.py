@@ -34,39 +34,39 @@ def displaycoloredMenu():
     # IFA_status = "InProcess"
     # IFA_status = "Complete"
     IFA_status = "Unknown"
-    IFA_angle = 90                #  2 characters width
-    IFA_count = 11111             #  6 characters width
+    IFA_angle = 0                #  2 characters width
+    IFA_count = 11             #  6 characters width
 
 
     # IFB_status = "InProcess"
-    # IFB_status = "Complete"
-    IFB_status = "Unknown"
-    IFB_angle = 90                #  2 characters width
-    IFB_count = 11111             #  6 characters width
+    IFB_status = "Complete"
+    # IFB_status = "Unknown"
+    IFB_angle = 2                #  2 characters width
+    IFB_count = 22             #  6 characters width
 
-    # IFC_status = "InProcess"
+    IFC_status = "InProcess"
     # IFC_status = "Complete"
-    IFC_status = "Unknown"
-    IFC_angle = 90                #  2 characters width
-    IFC_count = 11111             #  6 characters width
+    # IFC_status = "Unknown"
+    IFC_angle = 94                #  2 characters width
+    IFC_count = 0             #  6 characters width
 
-    # IFD_status = "InProcess"
+    IFD_status = "InProcess"
     # IFD_status = "Complete"
-    IFD_status = "Unknown"
-    IFD_angle = 90                #  2 characters width
-    IFD_count = 11111             #  6 characters width
+    # IFD_status = "Unknown"
+    IFD_angle = 96                #  2 characters width
+    IFD_count = 33333             #  6 characters width
 
     # IFE_status = "InProcess"
-    # IFE_status = "Complete"
-    IFE_status = "Unknown"
-    IFE_angle = 90                #  2 characters width
-    IFE_count = 11111             #  6 characters width
+    IFE_status = "Complete"
+    # IFE_status = "Unknown"
+    IFE_angle = 80                #  2 characters width
+    IFE_count = 20348             #  6 characters width
 
     # IFF_status = "InProcess"
-    # IFF_status = "Complete"
-    IFF_status = "Unknown"
-    IFF_angle = 90                #  2 characters width
-    IFF_count = 11111             #  6 characters width
+    IFF_status = "Complete"
+    # IFF_status = "Unknown"
+    IFF_angle = 70                #  2 characters width
+    IFF_count = 10101             #  6 characters width
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -74,7 +74,7 @@ def displaycoloredMenu():
     IFX_status_display_Complete = " Complete  "
     IFX_status_display_Unknown = " Unknown   "
 
-    os.system('clear')
+    # os.system('clear')   
     print (" ")
     print ("Interface A [ Gripper Pinch  ] - [", end="")    
 
@@ -94,9 +94,9 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print (IFA_angle,     end="")
+    print ("%02d" % (IFA_angle), end="" )
     print("] - [",        end="")
-    print (IFA_count,     end="")
+    print ("%05d" % (IFA_count), end="" )
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -118,9 +118,9 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print (IFB_angle,     end="")
+    print ("%02d" % (IFB_angle), end="" )
     print("] - [",        end="")
-    print (IFB_count,     end="")
+    print ("%05d" % (IFB_count), end="" )
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -142,9 +142,9 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print (IFC_angle,     end="")
+    print ("%02d" % (IFC_angle), end="" )
     print("] - [",        end="")
-    print (IFC_count,     end="")
+    print ("%05d" % (IFC_count), end="" )
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -166,9 +166,9 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print (IFD_angle,     end="")
+    print ("%02d" % (IFD_angle), end="" )
     print("] - [",        end="")
-    print (IFD_count,     end="")
+    print ("%05d" % (IFD_count), end="" )
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -190,9 +190,9 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print (IFE_angle,     end="")
+    print ("%02d" % (IFE_angle), end="" )
     print("] - [",        end="")
-    print (IFE_count,     end="")
+    print ("%05d" % (IFE_count), end="" )
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -214,18 +214,13 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print (IFF_angle,     end="")
+    print ("%02d" % (IFF_angle), end="" )
     print("] - [",        end="")
-    print (IFF_count,     end="")
+    print ("%05d" % (IFF_count), end="" )
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-    print ("Interface B [ Wrist Rotation ] - [In Process ] - [00] - [12345]")
-    print ("Interface C [ Wrist Flex     ] - [Complete   ] - [00] - [12345]")
-    print ("Interface D [ Elbow          ] - [UnKnown    ] - [00] - [12345]")
-    print ("Interface E [ Shoulder       ] - [UnKnown    ] - [00] - [12345]")
-    print ("Interface F [ Waist          ] - [UnKnown    ] - [00] - [12345]")
     print (" ")
     print (F"{Style.BRIGHT}Commands:")
     print (F"{Style.NORMAL}Stop all - 1")
@@ -241,14 +236,14 @@ def displaycoloredMenu():
 #==========================================================================================
 def stopAllMotors():
     register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 1      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommand = 1                                                    # This command
+    RPI2ARDexpected_response_count = 1                                    # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: stopAllMotors ")
 
 #==========================================================================================
 def homeAll():
@@ -260,7 +255,7 @@ def homeAll():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: homeAll ")
 
 #==========================================================================================
 def homeIFA():
@@ -272,7 +267,7 @@ def homeIFA():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: homeIFA ")
 
 #==========================================================================================
 def homeIFB():
@@ -284,7 +279,7 @@ def homeIFB():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND:  homeIFB")
 
 #==========================================================================================
 def homeIFC():
@@ -296,7 +291,7 @@ def homeIFC():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: homeIFC ")
 
 #==========================================================================================
 def IFAsetAngle():
@@ -308,7 +303,7 @@ def IFAsetAngle():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: IFAsetAngle ")
 
 #==========================================================================================
 def IFBsetAngle():
@@ -320,7 +315,7 @@ def IFBsetAngle():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: IFBsetAngle ")
 
 #==========================================================================================
 def IFCsetAngle():
@@ -332,9 +327,44 @@ def IFCsetAngle():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("Command / Response : ", RPI2ARDcommand, "  ", ARD2RPIresponse1)
+    print ("COMMAND: IFCsetAngle ")
 
 #==========================================================================================
+#==========================================================================================
+def IFAsetCount():
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 12      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+
+    print ("COMMAND: IFAsetCount ")
+
+#==========================================================================================
+def IFBsetCount():
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 22      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+
+    print ("COMMAND: IFBsetCount ")
+
+#==========================================================================================
+def IFCsetCount():
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 32      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+
+    print ("COMMAND: IFCsetCount ")
 
 #=(Main)===================================================================================
 
@@ -346,6 +376,17 @@ def main():
         # displayBasicMenu()
         displaycoloredMenu()
         userCommand = input(">>>>")
+        shortUserCommand = 99
+
+        if (len(userCommand) >= 2):
+            shortUserCommand = userCommand[0:2]
+
+            if (len(userCommand) >= 4):
+                position_of_dash = userCommand.find("-")
+                parameter = userCommand[(position_of_dash+1):]
+                print ("ShortUserCommand: |",shortUserCommand ,"|  Parameter:  |", int(parameter),"|")
+                print ("x2 |",int(parameter)*2,"|")
+
         if (userCommand == "0") or (userCommand == "q"):
             done = True
 
@@ -364,14 +405,23 @@ def main():
         if userCommand == "30":
             homeIFC()
 
-        if userCommand == "11":
+        if shortUserCommand == "11":
             IFAsetAngle()
 
-        if userCommand == "21":
+        if shortUserCommand == "21":
             IFBsetAngle()
 
-        if userCommand == "31":
+        if shortUserCommand == "31":
             IFCsetAngle()
+
+        if shortUserCommand == "12":
+            IFAsetCount()
+
+        if shortUserCommand == "22":
+            IFBsetCount()
+
+        if shortUserCommand == "32":
+            IFCsetCount()
 
 if __name__ == '__main__':
     main()
