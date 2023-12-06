@@ -280,6 +280,7 @@ def displaycoloredMenu():
 
 #==========================================================================================
 def stopAllMotors():    ##  two bytes command and one byte Reponse
+    # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 1                                                    # This command
     RPI2ARDexpected_response_count = 1                                    # count of bytes to be in the response
@@ -292,6 +293,7 @@ def stopAllMotors():    ##  two bytes command and one byte Reponse
 
 #==========================================================================================
 def homeAll():          ##  two byte command and one byte Reponse
+    # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 2      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -304,6 +306,7 @@ def homeAll():          ##  two byte command and one byte Reponse
 
 #==========================================================================================
 def homeIFA():          ##  Two byte command and one byte Reponse
+    # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 10      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -316,6 +319,7 @@ def homeIFA():          ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 def homeIFB():          ##  Two byte command and one byte Reponse
+    # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 20      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -328,6 +332,7 @@ def homeIFB():          ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 def homeIFC():          ##  Two byte command and one byte Reponse
+    # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 30      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -340,7 +345,7 @@ def homeIFC():          ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
-
+    
     global IFA_integer_status, IFA_status
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]
 
@@ -369,6 +374,7 @@ def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
 #==========================================================================================
 def IFBsetAngle():           ##  Two byte command and one byte Reponse
     global IFB_integer_status, IFB_status
+    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 21      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -382,6 +388,7 @@ def IFBsetAngle():           ##  Two byte command and one byte Reponse
 #==========================================================================================
 def IFCsetAngle():         ##  Two byte command and one byte Reponse
     global IFC_integer_status, IFC_status
+    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 31      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -395,11 +402,20 @@ def IFCsetAngle():         ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 #==========================================================================================
-def IFAsetCount():         ##  Three byte command and one byte Reponse
+def IFAsetCount(target_count):         ##  Three byte command and one byte Reponse
+                           #   [0][CMD# 12][High Byte][Low Byte][Size of Response]
+    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 12      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    target_count_high_byte = (target_count >> 8) & 0xff
+    target_count_low_byte = target_count % 256;   
+
+    RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
+                          RPI2ARDexpected_response_count]  #  Data sent to arduino
+    print ("target_count: ", target_count, "   High byte: ", target_count_high_byte, "  Low byte: ", target_count_low_byte)
+    print ("RPI to Ard List: ", RPI2ARDcommandList)
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
@@ -480,7 +496,7 @@ def main():
         map_interface_status_integer_to_text()
 
         displaycoloredMenu()
-        userCommand = input(">>>>")
+        userCommand = input(">>")
         shortUserCommand = 99
 
         if (len(userCommand) >= 2):
@@ -519,7 +535,7 @@ def main():
             IFCsetAngle()
 
         if shortUserCommand == "12":
-            IFAsetCount()
+            IFAsetCount(int(parameter))
 
         if shortUserCommand == "22":
             IFBsetCount()
