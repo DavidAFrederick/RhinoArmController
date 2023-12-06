@@ -16,7 +16,7 @@ addressInterface1 = 0x08
 IF1bus = I2C(addressInterface1)
 
 IFA_status = "Unknown"
-IFA_integer_status = 0
+IFA_integer_status = 2
 IFA_angle = 0              
 IFA_count = 0
 
@@ -59,39 +59,45 @@ print ("IFA_status: ", IFA_status)
 #==========================================================================================
 
 def map_interface_status_integer_to_text():
+    global IFA_integer_status, IFA_status
+    global IFB_integer_status, IFB_status
+    global IFC_integer_status, IFC_status
+    global IFD_integer_status, IFD_status
+    global IFE_integer_status, IFE_status
+    global IFF_integer_status, IFF_status
 
     print ("Start - map_interface_status_integer_to_text")
     print ("IFA_integer_status: ", IFA_integer_status)
-    # print ("IFA_status: ", IFA_status)
+    print ("IFA_status: ", IFA_status)
 
 
-    # if (IFA_integer_status == 0): IFA_status = "Unknown"
-    # if (IFA_integer_status == 1): IFA_status = "InProcess"
-    # if (IFA_integer_status == 2): IFA_status = "Complete"
+    if (IFA_integer_status == 0): IFA_status = "Unknown"
+    if (IFA_integer_status == 1): IFA_status = "InProcess"
+    if (IFA_integer_status == 2): IFA_status = "Complete"
 
-    # if (IFB_integer_status == 0): IFB_status = "Unknown"
-    # if (IFB_integer_status == 1): IFB_status = "InProcess"
-    # if (IFB_integer_status == 2): IFB_status = "Complete"
+    if (IFB_integer_status == 0): IFB_status = "Unknown"
+    if (IFB_integer_status == 1): IFB_status = "InProcess"
+    if (IFB_integer_status == 2): IFB_status = "Complete"
 
-    # if (IFC_integer_status == 0): IFC_status = "Unknown"
-    # if (IFC_integer_status == 1): IFC_status = "InProcess"
-    # if (IFC_integer_status == 2): IFC_status = "Complete"
+    if (IFC_integer_status == 0): IFC_status = "Unknown"
+    if (IFC_integer_status == 1): IFC_status = "InProcess"
+    if (IFC_integer_status == 2): IFC_status = "Complete"
 
-    # if (IFD_integer_status == 0): IFD_status = "Unknown"
-    # if (IFD_integer_status == 1): IFD_status = "InProcess"
-    # if (IFD_integer_status == 2): IFD_status = "Complete"
+    if (IFD_integer_status == 0): IFD_status = "Unknown"
+    if (IFD_integer_status == 1): IFD_status = "InProcess"
+    if (IFD_integer_status == 2): IFD_status = "Complete"
 
-    # if (IFE_integer_status == 0): IFE_status = "Unknown"
-    # if (IFE_integer_status == 1): IFE_status = "InProcess"
-    # if (IFE_integer_status == 2): IFE_status = "Complete"
+    if (IFE_integer_status == 0): IFE_status = "Unknown"
+    if (IFE_integer_status == 1): IFE_status = "InProcess"
+    if (IFE_integer_status == 2): IFE_status = "Complete"
 
-    # if (IFF_integer_status == 0): IFF_status = "Unknown"
-    # if (IFF_integer_status == 1): IFF_status = "InProcess"
-    # if (IFF_integer_status == 2): IFF_status = "Complete"
+    if (IFF_integer_status == 0): IFF_status = "Unknown"
+    if (IFF_integer_status == 1): IFF_status = "InProcess"
+    if (IFF_integer_status == 2): IFF_status = "Complete"
 
-    # print ("End - map_interface_status_integer_to_text")
-    # print ("IFA_integer_status: ", IFA_integer_status)
-    # print ("IFA_status: ", IFA_status)
+    print ("End - map_interface_status_integer_to_text")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
 
 #==========================================================================================
 # def define_global_variables():
@@ -213,7 +219,8 @@ def displaycoloredMenu():
     # os.system('clear')   
     print (" ")
     print ("Interface A [ Gripper Pinch  ] - [", end="")    
-
+ 
+    IFA_status_display = ""
     if (IFA_status == "Unknown"):   
         print (Fore.RED, end="")
         IFA_status_display = IFX_status_display_Unknown
@@ -238,7 +245,8 @@ def displaycoloredMenu():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     print ("Interface B [ Wrist Rotation ] - [", end="")    
 
-    if (IFA_status == "Unknown"):   
+    IFB_status_display = ""
+    if (IFB_status == "Unknown"):   
         print (Fore.RED, end="")
         IFB_status_display = IFX_status_display_Unknown
     
@@ -262,6 +270,7 @@ def displaycoloredMenu():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     print ("Interface C [ Wrist Flex     ] - [", end="")    
 
+    IFC_status_display = ""
     if (IFC_status == "Unknown"):   
         print (Fore.RED, end="")
         IFC_status_display = IFX_status_display_Unknown
@@ -286,6 +295,7 @@ def displaycoloredMenu():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     print ("Interface D [ Elbow          ] - [", end="")    
 
+    IFD_status_display = ""
     if (IFD_status == "Unknown"):   
         print (Fore.RED, end="")
         IFD_status_display = IFX_status_display_Unknown
@@ -310,6 +320,7 @@ def displaycoloredMenu():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     print ("Interface E [ Shoulder       ] - [", end="")    
 
+    IFE_status_display = ""
     if (IFE_status == "Unknown"):   
         print (Fore.RED, end="")
         IFE_status_display = IFX_status_display_Unknown
@@ -334,6 +345,7 @@ def displaycoloredMenu():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     print ("Interface F [ Waist          ] - [", end="")    
 
+    IFF_status_display = ""
     if (IFF_status == "Unknown"):   
         print (Fore.RED, end="")
         IFF_status_display = IFX_status_display_Unknown
