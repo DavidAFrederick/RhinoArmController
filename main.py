@@ -6,43 +6,136 @@ import sys
 import logging
 from adafruit_I2C_lib import I2C
 
-
-def define_global_variables():
-    global addressInterface1;   addressInterface1 = 0x08
-    global IF1bus;              IF1bus = I2C(addressInterface1)
-
-    global IFA_status;          IFA_status = "Unknown"
-    global IFA_integer_status;  IFA_integer_status = 0
-    global IFA_angle;           IFA_angle = 0              
-    global IFA_count;           IFA_count = 0
-
-    print ("IFA_integer_status start of IFASetANgle: ", IFA_integer_status)
+# IFA_status = "Unknown"
+# IFA_integer_status = 2
 
 
-    global IFB_status;          IFB_status = "Unknown"
-    global IFB_integer_status;  IFB_integer_status = 0
-    global IFB_angle;           IFB_angle = 0              
-    global IFB_count;           IFB_count = 0
+### Defining global variables
 
-    global IFC_status;          IFC_status = "Unknown"
-    global IFC_integer_status;  IFC_integer_status = 0
-    global IFC_angle;           IFC_angle = 0              
-    global IFC_count;           IFC_count = 0
+addressInterface1 = 0x08
+IF1bus = I2C(addressInterface1)
 
-    global IFD_status;          IFD_status = "Unknown"
-    global IFD_integer_status;  IFD_integer_status = 0
-    global IFD_angle;           IFD_angle = 0              
-    global IFD_count;           IFD_count = 0
+IFA_status = "Unknown"
+IFA_integer_status = 0
+IFA_angle = 0              
+IFA_count = 0
 
-    global IFE_status;          IFE_status = "Unknown"
-    global IFE_integer_status;  IFE_integer_status = 0
-    global IFE_angle;           IFE_angle = 0              
-    global IFE_count;           IFE_count = 0
+print ("Middle of defining global var")
+print ("IFA_integer_status: ", IFA_integer_status)
+print ("IFA_status: ", IFA_status)
 
-    global IFF_status;          IFF_status = "Unknown"
-    global IFF_integer_status;  IFF_integer_status = 0
-    global IFF_angle;           IFF_angle = 0              
-    global IFF_count;           IFF_count = 0
+IFB_status = "Unknown"
+IFB_integer_status = 0
+IFB_angle = 0              
+IFB_count = 0
+
+IFC_status = "Unknown"
+IFC_integer_status = 0
+IFC_angle = 0              
+IFC_count = 0
+
+IFD_status = "Unknown"
+IFD_integer_status = 0
+IFD_angle = 0              
+IFD_count = 0
+
+IFE_status = "Unknown"
+IFE_integer_status = 0
+IFE_angle = 0              
+IFE_count = 0
+
+IFF_status = "Unknown"
+IFF_integer_status = 0
+IFF_angle = 0              
+IFF_count = 0
+
+
+########
+
+print ("TOP OF CODE")
+print ("IFA_integer_status: ", IFA_integer_status)
+print ("IFA_status: ", IFA_status)
+
+#==========================================================================================
+
+def map_interface_status_integer_to_text():
+
+    print ("Start - map_interface_status_integer_to_text")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    # print ("IFA_status: ", IFA_status)
+
+
+    # if (IFA_integer_status == 0): IFA_status = "Unknown"
+    # if (IFA_integer_status == 1): IFA_status = "InProcess"
+    # if (IFA_integer_status == 2): IFA_status = "Complete"
+
+    # if (IFB_integer_status == 0): IFB_status = "Unknown"
+    # if (IFB_integer_status == 1): IFB_status = "InProcess"
+    # if (IFB_integer_status == 2): IFB_status = "Complete"
+
+    # if (IFC_integer_status == 0): IFC_status = "Unknown"
+    # if (IFC_integer_status == 1): IFC_status = "InProcess"
+    # if (IFC_integer_status == 2): IFC_status = "Complete"
+
+    # if (IFD_integer_status == 0): IFD_status = "Unknown"
+    # if (IFD_integer_status == 1): IFD_status = "InProcess"
+    # if (IFD_integer_status == 2): IFD_status = "Complete"
+
+    # if (IFE_integer_status == 0): IFE_status = "Unknown"
+    # if (IFE_integer_status == 1): IFE_status = "InProcess"
+    # if (IFE_integer_status == 2): IFE_status = "Complete"
+
+    # if (IFF_integer_status == 0): IFF_status = "Unknown"
+    # if (IFF_integer_status == 1): IFF_status = "InProcess"
+    # if (IFF_integer_status == 2): IFF_status = "Complete"
+
+    # print ("End - map_interface_status_integer_to_text")
+    # print ("IFA_integer_status: ", IFA_integer_status)
+    # print ("IFA_status: ", IFA_status)
+
+#==========================================================================================
+# def define_global_variables():
+
+#     print ("Defining global variables")
+#     print ("IFA_integer_status: ", IFA_integer_status)
+#     print ("IFA_status: ", IFA_status)
+
+#     global addressInterface1;   addressInterface1 = 0x08
+#     global IF1bus;              IF1bus = I2C(addressInterface1)
+
+#     global IFAx_status;         IFA_status = "Unknown"
+#     global IFAx_integer_status; IFA_integer_status = 0
+#     global IFA_angle;           IFA_angle = 0              
+#     global IFA_count;           IFA_count = 0
+
+#     print ("Middle of defining global var")
+#     print ("IFA_integer_status: ", IFA_integer_status)
+#     print ("IFA_status: ", IFA_status)
+
+#     global IFB_status;          IFB_status = "Unknown"
+#     global IFB_integer_status;  IFB_integer_status = 0
+#     global IFB_angle;           IFB_angle = 0              
+#     global IFB_count;           IFB_count = 0
+
+#     global IFC_status;          IFC_status = "Unknown"
+#     global IFC_integer_status;  IFC_integer_status = 0
+#     global IFC_angle;           IFC_angle = 0              
+#     global IFC_count;           IFC_count = 0
+
+#     global IFD_status;          IFD_status = "Unknown"
+#     global IFD_integer_status;  IFD_integer_status = 0
+#     global IFD_angle;           IFD_angle = 0              
+#     global IFD_count;           IFD_count = 0
+
+#     global IFE_status;          IFE_status = "Unknown"
+#     global IFE_integer_status;  IFE_integer_status = 0
+#     global IFE_angle;           IFE_angle = 0              
+#     global IFE_count;           IFE_count = 0
+
+#     global IFF_status;          IFF_status = "Unknown"
+#     global IFF_integer_status;  IFF_integer_status = 0
+#     global IFF_angle;           IFF_angle = 0              
+#     global IFF_count;           IFF_count = 0
 
 #==========================================================================================
 def displayBasicMenu():
@@ -65,6 +158,12 @@ def displayBasicMenu():
 
 #==========================================================================================
 def displaycoloredMenu():
+    global IFA_integer_status, IFA_status
+    global IFB_integer_status, IFB_status
+    global IFC_integer_status, IFC_status
+    print ("Start - displaycolored")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
 
     # # IFA_status = "InProcess"
     # # IFA_status = "Complete"
@@ -267,6 +366,9 @@ def displaycoloredMenu():
     print ("Set Count - 12-xxxx, 22-xxxx, 33-xxxx")
     print ("Exit - 0")
 
+    print ("end - displaycolored")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
 
 #==========================================================================================
 
@@ -335,8 +437,13 @@ def homeIFC():          ##  Two byte command and one byte Reponse
 #==========================================================================================
 def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
 
+    global IFA_integer_status, IFA_status
+
+    print ("Start - IFAsetAngle")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
+
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]
-    print ("IFA_integer_status start of IFASetANgle: ", IFA_integer_status)
 
     if (angle < 0) or (angle > 90):
         print ("Angle outside of 0 to 90, setting to 2, angle is:  ",angle )
@@ -356,10 +463,12 @@ def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
         IFA_integer_status = ARD2RPIresponse1[0]
 
     print ("COMMAND: IFAsetAngle ")
-    print ("IFA_integer_status in IFBSetAngle: ", IFA_integer_status)
-    print ("IFA_status: in IFBSetAngle ", IFA_status)
+    print ("end - IFAsetAngle")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
 #==========================================================================================
 def IFBsetAngle():           ##  Two byte command and one byte Reponse
+    global IFB_integer_status, IFB_status
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 21      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -372,6 +481,7 @@ def IFBsetAngle():           ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 def IFCsetAngle():         ##  Two byte command and one byte Reponse
+    global IFC_integer_status, IFC_status
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 31      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
@@ -451,53 +561,33 @@ def request_all_interface_counts():
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-#==========================================================================================
 
-def map_interface_status_integer_to_text():
-    print ("IFA_integer_status in Map start: ", IFA_integer_status)
-    print ("IFA_status: in map start ", IFA_status)
-
-
-    if (IFA_integer_status == 0): IFA_status = "Unknown"
-    if (IFA_integer_status == 1): IFA_status = "InProcess"
-    if (IFA_integer_status == 2): IFA_status = "Complete"
-
-    if (IFB_integer_status == 0): IFB_status = "Unknown"
-    if (IFB_integer_status == 1): IFB_status = "InProcess"
-    if (IFB_integer_status == 2): IFB_status = "Complete"
-
-    if (IFC_integer_status == 0): IFC_status = "Unknown"
-    if (IFC_integer_status == 1): IFC_status = "InProcess"
-    if (IFC_integer_status == 2): IFC_status = "Complete"
-
-    if (IFD_integer_status == 0): IFD_status = "Unknown"
-    if (IFD_integer_status == 1): IFD_status = "InProcess"
-    if (IFD_integer_status == 2): IFD_status = "Complete"
-
-    if (IFE_integer_status == 0): IFE_status = "Unknown"
-    if (IFE_integer_status == 1): IFE_status = "InProcess"
-    if (IFE_integer_status == 2): IFE_status = "Complete"
-
-    if (IFF_integer_status == 0): IFF_status = "Unknown"
-    if (IFF_integer_status == 1): IFF_status = "InProcess"
-    if (IFF_integer_status == 2): IFF_status = "Complete"
-
-    print ("IFA_integer_status in Map out: ", IFA_integer_status)
-    print ("IFA_status: in map end ", IFA_status)
 
 #=(Main)===================================================================================
 
 def main():
     logging.basicConfig(filename='python_app.log')
+    # define_global_variables()
 
-    define_global_variables()
+    print ("Start - main")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
 
 
-    parameter = 99
+    print ("After global variables in main")
+
+    # parameter = 99
 
     done = False
     while not done:
+        map_interface_status_integer_to_text()
+
+        print ("middle - main")
+        print ("IFA_integer_status: ", IFA_integer_status)
+        print ("IFA_status: ", IFA_status)
+
         # displayBasicMenu()
+
         displaycoloredMenu()
         userCommand = input(">>>>")
         shortUserCommand = 99
@@ -509,7 +599,6 @@ def main():
                 position_of_dash = userCommand.find("-")
                 parameter = userCommand[(position_of_dash+1):]
                 print ("ShortUserCommand: |",shortUserCommand ,"|  Parameter:  |", int(parameter),"|")
-                print ("x2 |",int(parameter)*2,"|")
 
         if (userCommand == "0") or (userCommand == "q"):
             done = True
@@ -529,11 +618,17 @@ def main():
         if userCommand == "30":
             homeIFC()
 
+        print ("Start - main   before 11")
+        print ("IFA_integer_status: ", IFA_integer_status)
+        print ("IFA_status: ", IFA_status)
+
         if shortUserCommand == "11":
             IFAsetAngle(int(parameter))
 
-        print ("IFA_integer_status in main: ", IFA_integer_status)
-        print ("IFA_status: in main mid ", IFA_status)
+        print ("Start - main   after 11")
+        print ("IFA_integer_status: ", IFA_integer_status)
+        print ("IFA_status: ", IFA_status)
+
 
         if shortUserCommand == "21":
             IFBsetAngle()
@@ -551,8 +646,10 @@ def main():
             IFCsetCount()
 
     map_interface_status_integer_to_text()
-    print ("IFA_integer_status end main: ", IFA_integer_status)
-    print ("IFA_status: in main end ", IFA_status)
+    print ("Start - main   end")
+    print ("IFA_integer_status: ", IFA_integer_status)
+    print ("IFA_status: ", IFA_status)
+
 
 if __name__ == '__main__':
     main()
