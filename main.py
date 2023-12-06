@@ -455,12 +455,19 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
 def request_all_interface_counts():
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 50      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDexpected_response_count = 6  # count of bytes to be in the response (1 greater than number of bytes returned)
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    print ("ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
 
+
+    IFA_count = ARD2RPIresponse1[0] * 256 + ARD2RPIresponse1[1]
+    IFB_count = ARD2RPIresponse1[2] * 256 + ARD2RPIresponse1[3]
+    IFC_count = ARD2RPIresponse1[4] * 256 + ARD2RPIresponse1[5]
+
+    print ("IFA_count: ", IFA_count, "   IFB_count: ", IFB_count, "     IFC_count: ", IFC_count, )
 
 
 #=(Main)===================================================================================
@@ -519,6 +526,13 @@ def main():
 
         if shortUserCommand == "32":
             IFCsetCount()
+
+        if shortUserCommand == "40":
+            request_all_interface_status()
+
+
+        if shortUserCommand == "50":
+            request_all_interface_counts()
 
 if __name__ == '__main__':
     main()

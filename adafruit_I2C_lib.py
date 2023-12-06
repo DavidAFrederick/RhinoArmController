@@ -134,7 +134,7 @@ class I2C:
                 result = self.bus.read_i2c_block_data(self.address, reg, length)                
                 # result = self.bus.read_block_data(self.address, reg)                
                 # result = self.bus.read_block_data(self.address, reg)
-                print ("result")
+                # print ("result")
                 
 #				logging.debug('I2C: Device 0x%02X from reg 0x%02X', self.address, reg)
 #				print('I2C: Device 0x%02X from reg 0x%02X', self.address, reg)
