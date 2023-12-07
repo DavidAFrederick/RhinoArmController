@@ -6,14 +6,17 @@ import sys
 import logging
 from adafruit_I2C_lib import I2C
 
+##  Dec 6, 2023
 
 #=( Defining global variables )=========================================
 
 addressInterface1 = 0x08
 IF1bus = I2C(addressInterface1)
 
+loop_for_status = True
+
 IFA_status = "Unknown"
-IFA_integer_status = 2
+IFA_integer_status = 0
 IFA_angle = 0              
 IFA_count = 0
 
@@ -79,7 +82,7 @@ def map_interface_status_integer_to_text():
 #==========================================================================================
 def displayBasicMenu():
     os.system('clear')
-    print (" ")
+    print ("                                   Status       Angle    Count")
     print ("Interface A [ Gripper Pinch  ] - [Not started] - [45] - [12345]") 
     print ("Interface B [ Wrist Rotation ] - [In Process ] - [00] - [12345]")
     print ("Interface C [ Wrist Flex     ] - [Complete   ] - [00] - [12345]")
@@ -89,8 +92,8 @@ def displayBasicMenu():
     print (" ")
     print (F"{Style.BRIGHT}Commands:")
     print (F"{Style.NORMAL}Stop all - 1")
-    print ("Home all - 2")
-    print ("Home One - 10, 20, 30")
+    print ("Home all  - 2")
+    print ("Home One  - 10, 20, 30")
     print ("Set Angle - 11-xx, 21-xx, 31-xx")
     print ("Set Count - 12-xxxx, 22-xxxx, 33-xxxx")
     print ("Exit - 0")
@@ -101,15 +104,17 @@ def displaycoloredMenu():
     global IFB_integer_status, IFB_status
     global IFC_integer_status, IFC_status
 
-    # IFA_integer_status = 2
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
 
     IFX_status_display_In_Process = "In Process "
     IFX_status_display_Complete = " Complete  "
     IFX_status_display_Unknown = " Unknown   "
 
-    # os.system('clear')   
-    print (" ")
+    os.system('clear')   
+    print ("================================================================")
+    print ("                                   Status       Angle    Count")
+    print ("================================================================")
     print ("Interface A [ Gripper Pinch  ] - [", end="")    
  
     IFA_status_display = ""
@@ -263,11 +268,11 @@ def displaycoloredMenu():
 
     print (" ")
     print (F"{Style.BRIGHT}Commands:")
-    print (F"{Style.NORMAL}Stop all - 1")
-    print ("Home all - 2")
-    print ("Home One - 10, 20, 30")
-    print ("Set Angle - 11-xx, 21-xx, 31-xx")
-    print ("Set Count - 12-xxxx, 22-xxxx, 33-xxxx")
+    print (F"{Style.NORMAL}Stop all   - 1")
+    print ("Home all   - 2")
+    print ("Home One   - 10, 20, 30")
+    print ("Set Angle  - 11-xx, 21-xx, 31-xx")
+    print ("Set Count  - 12-xxxx, 22-xxxx, 32-xxxx")
 
     print ("Get Status - 40")
     print ("Set Count  - 50")
@@ -482,9 +487,11 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
     IFB_integer_status = ARD2RPIresponse1[1]
     IFC_integer_status = ARD2RPIresponse1[2]
 
-    # print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
+    print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
 
-    # print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
+    print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
+
+    time.sleep(3)
 
 #==========================================================================================
 
@@ -517,6 +524,7 @@ def request_all_interface_counts():
 
 def main():
     global IFA_integer_status, IFB_integer_status, IFC_integer_status
+    global loop_for_status
     logging.basicConfig(filename='python_app.log')
 
     done = False
@@ -525,16 +533,23 @@ def main():
         map_interface_status_integer_to_text()
         displaycoloredMenu()
 
-        IFB_integer_status = 2   #  temporary bypass
-        IFC_integer_status = 2
+        print ("Looping status top: ", loop_for_status)
 
-        if (IFA_integer_status != 2) or (IFB_integer_status != 2) or (IFC_integer_status != 2):
-        # if (IFA_integer_status != 2):
-            # Request status if any of the interfaces is not complete
+        if (loop_for_status):
             userCommand = "90"
-            shortUserCommand = 90
-            IFA_integer_status = 0
-            time.sleep(0.2)
+            shortUserCommand = "90"
+            loop_for_status = True
+            print (">>> LOOPING <<<")
+            print ("Stat  ",IFA_integer_status, "  ", IFB_integer_status,"  ",  IFC_integer_status)
+            time.sleep(2.2)
+            if (IFA_integer_status == 2) and (IFB_integer_status == 2) and (IFC_integer_status == 2):
+                print ("Stat  ",IFA_integer_status, "  ", IFB_integer_status,"  ",  IFC_integer_status)
+                print ("SETTING STATUS TO FALSE ----------")
+                time.sleep(0.2)
+
+                loop_for_status = False
+            else:
+                loop_for_status = True
         else:
             userCommand = input(">>")
             shortUserCommand = 99
@@ -546,6 +561,8 @@ def main():
                     position_of_dash = userCommand.find("-")
                     parameter = userCommand[(position_of_dash+1):]
                     print ("ShortUserCommand: |",shortUserCommand ,"|  Parameter:  |", int(parameter),"|")
+
+        print ("Looping status: ", loop_for_status)
 
         if (userCommand == "0") or (userCommand == "q"):
             done = True
@@ -576,12 +593,15 @@ def main():
 
         if shortUserCommand == "12":
             IFAsetCount(int(parameter))
+            loop_for_status = True
 
         if shortUserCommand == "22":
             IFBsetCount(int(parameter))
+            loop_for_status = True
 
         if shortUserCommand == "32":
             IFCsetCount(int(parameter))
+            loop_for_status = True
 
         if shortUserCommand == "40":
             request_all_interface_status()
@@ -591,7 +611,7 @@ def main():
 
         if userCommand == "90":
             request_all_interface_counts()
-            time.sleep(0.5)
+            time.sleep(0.2)
             request_all_interface_status()
 
 if __name__ == '__main__':
