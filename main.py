@@ -424,11 +424,16 @@ def IFAsetCount(target_count):         ##  Three byte command and one byte Repon
     # print ("COMMAND: IFAsetCount ")
 
 #==========================================================================================
-def IFBsetCount():         ##  Three byte command and one byte Reponse
+def IFBsetCount(target_count):         ##  Three byte command and one byte Reponse
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 22      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    target_count_high_byte = (target_count >> 8) & 0xff
+    target_count_low_byte = target_count % 256;   
+
+    RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
+                          RPI2ARDexpected_response_count]  #  Data sent to arduino
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
@@ -436,11 +441,17 @@ def IFBsetCount():         ##  Three byte command and one byte Reponse
     # print ("COMMAND: IFBsetCount ")
 
 #==========================================================================================
-def IFCsetCount():         ##  Three byte command and one byte Reponse
+def IFCsetCount(target_count):         ##  Three byte command and one byte Reponse
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 32      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+
+    target_count_high_byte = (target_count >> 8) & 0xff
+    target_count_low_byte = target_count % 256;   
+
+    RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
+                          RPI2ARDexpected_response_count]  #  Data sent to arduino
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
@@ -517,8 +528,8 @@ def main():
         IFB_integer_status = 2   #  temporary bypass
         IFC_integer_status = 2
 
-        # if (IFA_integer_status != 2) or (IFB_integer_status != 2) or (IFC_integer_status != 2):
-        if (IFA_integer_status != 2):
+        if (IFA_integer_status != 2) or (IFB_integer_status != 2) or (IFC_integer_status != 2):
+        # if (IFA_integer_status != 2):
             # Request status if any of the interfaces is not complete
             userCommand = "90"
             shortUserCommand = 90
@@ -558,19 +569,19 @@ def main():
             IFAsetAngle(int(parameter))
 
         if shortUserCommand == "21":
-            IFBsetAngle()
+            IFBsetAngle(int(parameter))
 
         if shortUserCommand == "31":
-            IFCsetAngle()
+            IFCsetAngle(int(parameter))
 
         if shortUserCommand == "12":
             IFAsetCount(int(parameter))
 
         if shortUserCommand == "22":
-            IFBsetCount()
+            IFBsetCount(int(parameter))
 
         if shortUserCommand == "32":
-            IFCsetCount()
+            IFCsetCount(int(parameter))
 
         if shortUserCommand == "40":
             request_all_interface_status()
