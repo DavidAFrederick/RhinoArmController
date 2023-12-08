@@ -1,12 +1,19 @@
 from colorama import Fore, Back, Style
 import os
-import smbus
+# import smbus
 import time
 import sys
 import logging
 from adafruit_I2C_lib import I2C
 
-##  Dec 6, 2023
+##  Dec 7, 2023
+"""
+ToDo
+) Figure why command 90 is not working
+) Add joints D,E,F
+) Determine which status items are really being used.
+
+"""
 
 #=( Defining global variables )=========================================
 
@@ -17,9 +24,8 @@ IF1bus = I2C(addressInterface1)
 IF2bus = I2C(addressInterface2)
 
 loop_for_status = True
-error_string = ""
+error_string = "     "
 
-#======================================================================
 IFA_status = "Unknown"
 IFA_integer_status = 0
 IFA_angle = 0              
@@ -85,6 +91,8 @@ def map_interface_status_integer_to_text():
     if (IFF_integer_status == 2): IFF_status = "Complete"
 
 #==========================================================================================
+#  This function is no longer needed
+
 def displayBasicMenu():
     os.system('clear')
     print ("                                   Status       Angle    Count")
@@ -110,6 +118,9 @@ def displaycoloredMenu():
     global IFA_integer_status, IFA_status
     global IFB_integer_status, IFB_status
     global IFC_integer_status, IFC_status
+    global IFD_integer_status, IFD_status
+    global IFE_integer_status, IFE_status
+    global IFF_integer_status, IFF_status
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -276,9 +287,12 @@ def displaycoloredMenu():
     print (F"{Style.BRIGHT}Commands:")
     print (F"{Style.NORMAL}Stop all   - 1")
     print ("Home all   - 2")
-    print ("Home One   - 10, 20, 30")
-    print ("Set Angle  - 11-xx, 21-xx, 31-xx")
-    print ("Set Count  - 12-xxxx, 22-xxxx, 32-xxxx")
+    print ("                             Joint Commands")
+    print (" ")
+    print ("              A        B        C        D        E        F   ")
+    print ("Home One   - 10,      20,      30,      40,      50,      60")
+    print ("Set Angle  - 11-xx,   21-xx,   31-xx,   41-xx,   51-xx,   61-xx")
+    print ("Set Count  - 12-xxxx, 22-xxxx, 32-xxxx, 42-xxxx, 52-xxxx, 62-xxxx")
     print (" ")
     print ("Get Status - 40")
     print ("Set Count  - 50")
@@ -491,6 +505,9 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
     global IFA_integer_status, IFA_status
     global IFB_integer_status, IFB_status
     global IFC_integer_status, IFC_status
+    global IFD_integer_status, IFD_status
+    global IFE_integer_status, IFE_status
+    global IFF_integer_status, IFF_status
 
     # print ("request_all_interface_status()")
 
@@ -540,10 +557,13 @@ def request_all_interface_counts():
 
 def main():
     global IFA_integer_status, IFB_integer_status, IFC_integer_status
+    global IFD_integer_status, IFE_integer_status, IFF_integer_status
     global loop_for_status
     logging.basicConfig(filename='python_app.log')
 
     done = False
+    loop_for_status = True
+
     while not done:
 
         map_interface_status_integer_to_text()
@@ -556,29 +576,36 @@ def main():
             shortUserCommand = "90"
             loop_for_status = True
             print (">>> LOOPING <<<")
+
             print ("Stat  ",IFA_integer_status, "  ", IFB_integer_status,"  ",  IFC_integer_status)
-            time.sleep(2.2)
+            print ("Pausing ------")
+            time.sleep(3)
+            
             if (IFA_integer_status == 2) and (IFB_integer_status == 2) and (IFC_integer_status == 2):
                 print ("Stat  ",IFA_integer_status, "  ", IFB_integer_status,"  ",  IFC_integer_status)
-                print ("SETTING STATUS TO FALSE ----------")
-                time.sleep(0.2)
+
+                print ("SETTING Looping TO FALSE ----------")
+                print ("Pausing within Checking status  ------")
+                time.sleep(3)
 
                 loop_for_status = False
             else:
                 loop_for_status = True
         else:
             userCommand = input(">>")
-            shortUserCommand = 99
+            shortUserCommand = "99"    # placed in quotes
 
             if (len(userCommand) >= 2):
                 shortUserCommand = userCommand[0:2]
 
-                if (len(userCommand) >= 4):
-                    position_of_dash = userCommand.find("-")
-                    parameter = userCommand[(position_of_dash+1):]
-                    print ("ShortUserCommand: |",shortUserCommand ,"|  Parameter:  |", int(parameter),"|")
+            if (len(userCommand) >= 4):
+                position_of_dash = userCommand.find("-")
+                parameter = userCommand[(position_of_dash+1):]
+                print ("ShortUserCommand: |",shortUserCommand ,"|  Parameter:  |", int(parameter),"|")
 
         print ("Looping status: ", loop_for_status)
+        print ("Pausing before case statement for commands -----------")
+        time.sleep(3)
 
         if (userCommand == "0") or (userCommand == "q"):
             done = True
@@ -629,6 +656,10 @@ def main():
             request_all_interface_counts()
             time.sleep(0.2)
             request_all_interface_status()
+
+        print ("Looping status: ", loop_for_status)
+        print ("Pausing before case statement for commands -----------")
+        time.sleep(3)
 
 if __name__ == '__main__':
     main()
