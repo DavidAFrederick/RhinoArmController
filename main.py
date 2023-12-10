@@ -128,7 +128,7 @@ def displaycoloredMenu():
     IFX_status_display_Complete = " Complete  "
     IFX_status_display_Unknown = " Unknown   "
 
-    os.system('clear')   
+    # os.system('clear')   
     print ("================================================================")
     print ("|                                  Status       Angle    Count |")
     print ("================================================================")
@@ -522,11 +522,9 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
     IFB_integer_status = ARD2RPIresponse1[1]
     IFC_integer_status = ARD2RPIresponse1[2]
 
-    # print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
-
-    # print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
-
-    # time.sleep(3)
+    print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
+    print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
+    time.sleep(1)
 
 #==========================================================================================
 
@@ -562,7 +560,10 @@ def main():
     logging.basicConfig(filename='python_app.log')
 
     done = False
-    loop_for_status = True
+    # loop_for_status = True
+    loop_for_status = False   #  Need to get to main menu so we can command to home.
+
+    print ("Start of While Loop")
 
     while not done:
         time.sleep(0.5)
@@ -575,6 +576,9 @@ def main():
             shortUserCommand = "90"
             loop_for_status = True
             print (">>> LOOPING <<<")
+
+            IFB_integer_status = 2
+            IFC_integer_status = 2
             
             if (IFA_integer_status == 2) and (IFB_integer_status == 2) and (IFC_integer_status == 2):
                 # print ("Stat  ",IFA_integer_status, "  ", IFB_integer_status,"  ",  IFC_integer_status)
@@ -637,10 +641,10 @@ def main():
         if shortUserCommand == "50":
             request_all_interface_counts()
 
-        if userCommand == "90":
-            request_all_interface_counts()
-            time.sleep(0.2)
-            request_all_interface_status()
+        # if userCommand == "90":
+        #     request_all_interface_counts()
+        #     time.sleep(0.2)
+        #     request_all_interface_status()
 
 if __name__ == '__main__':
     main()
