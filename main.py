@@ -128,7 +128,7 @@ def displaycoloredMenu():
     IFX_status_display_Complete = " Complete  "
     IFX_status_display_Unknown = " Unknown   "
 
-    # os.system('clear')   
+    os.system('clear')   
     print ("================================================================")
     print ("|                                  Status       Angle    Count |")
     print ("================================================================")
@@ -522,9 +522,9 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
     IFB_integer_status = ARD2RPIresponse1[1]
     IFC_integer_status = ARD2RPIresponse1[2]
 
-    print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
-    print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
-    time.sleep(1)
+    # print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
+    # print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
+    # time.sleep(1)
 
 #==========================================================================================
 
@@ -534,7 +534,7 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
 
 def request_all_interface_counts():
     global IFA_count, IFB_count, IFC_count
-    # print ("request_all_interface_counts()")
+    # print ("50 - request_all_interface_counts()")
 
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 50      # This command
@@ -543,13 +543,29 @@ def request_all_interface_counts():
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-    # print ("ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    # print ("50 - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
 
     IFA_count = ARD2RPIresponse1[0] * 256 + ARD2RPIresponse1[1]
     IFB_count = ARD2RPIresponse1[2] * 256 + ARD2RPIresponse1[3]
     IFC_count = ARD2RPIresponse1[4] * 256 + ARD2RPIresponse1[5]
 
-    # print ("IFA_count: ", IFA_count, "   IFB_count: ", IFB_count, "     IFC_count: ", IFC_count, )
+    # print ("50 - IFA_count: ", IFA_count, "   IFB_count: ", IFB_count, "     IFC_count: ", IFC_count, )
+    # time.sleep(2.5)
+
+
+#==========================================================================================
+##  Move the Joint A away from home for 1 second
+def IFA_move_from_below_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 19      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 19 - IFA - Move away from home ")
+
 
 #=(Main)===================================================================================
 
@@ -560,14 +576,13 @@ def main():
     logging.basicConfig(filename='python_app.log')
 
     done = False
-    # loop_for_status = True
     loop_for_status = False   #  Need to get to main menu so we can command to home.
 
-    print ("Start of While Loop")
+    # print ("Start of While Loop")
 
     while not done:
-        time.sleep(0.5)
         request_all_interface_status()
+        request_all_interface_counts()
         map_interface_status_integer_to_text()
         displaycoloredMenu()
 
@@ -634,6 +649,9 @@ def main():
         if shortUserCommand == "32":
             IFCsetCount(int(parameter))
             loop_for_status = True
+
+        if shortUserCommand == "19":
+            IFA_move_from_below_home_for_1_second()
 
         if shortUserCommand == "40":
             request_all_interface_status()
