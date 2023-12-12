@@ -555,6 +555,45 @@ def request_all_interface_counts():
 
 #==========================================================================================
 ##  Move the Joint A away from home for 1 second
+def IFA_move_toward_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 18      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 18 - IF-A - Move toward home ")
+
+#==========================================================================================
+##  Move the Joint B away from home for 1 second
+def IFB_move_toward_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 28      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 28 - IF-B - Move toward home ")
+
+#==========================================================================================
+##  Move the Joint C away from home for 1 second
+def IFC_move_toward_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 38      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 38 - IF-C - Move toward home ")
+
+#==========================================================================================
+##  Move the Joint A away from home for 1 second
 def IFA_move_from_below_home_for_1_second():
     
     # All transfers to the Arduino include:  [the command],[Expected response size]
@@ -564,7 +603,33 @@ def IFA_move_from_below_home_for_1_second():
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
 
-    # print ("COMMAND: 19 - IFA - Move away from home ")
+    # print ("COMMAND: 19 - IF-A - Move away from home ")
+
+#==========================================================================================
+##  Move the Joint B away from home for 1 second
+def IFB_move_from_below_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 29      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 29 - IF-B - Move away from home ")
+
+#==========================================================================================
+##  Move the Joint A away from home for 1 second
+def IFC_move_from_below_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 39      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 39 - IF-C - Move away from home ")
 
 
 #=(Main)===================================================================================
@@ -650,8 +715,24 @@ def main():
             IFCsetCount(int(parameter))
             loop_for_status = True
 
+        if shortUserCommand == "18":
+            IFA_move_toward_home_for_1_second()
+
+        if shortUserCommand == "28":
+            IFB_move_toward_home_for_1_second()
+
+        if shortUserCommand == "38":
+            IFC_move_toward_home_for_1_second()
+
+
         if shortUserCommand == "19":
             IFA_move_from_below_home_for_1_second()
+
+        if shortUserCommand == "29":
+            IFB_move_from_below_home_for_1_second()
+
+        if shortUserCommand == "39":
+            IFC_move_from_below_home_for_1_second()
 
         if shortUserCommand == "40":
             request_all_interface_status()
