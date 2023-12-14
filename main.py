@@ -128,7 +128,7 @@ def displaycoloredMenu():
     IFX_status_display_Complete = " Complete  "
     IFX_status_display_Unknown = " Unknown   "
 
-    os.system('clear')   
+    # os.system('clear')   
     print ("================================================================")
     print ("|                                  Status       Angle    Count |")
     print ("================================================================")
@@ -311,6 +311,9 @@ def stopAllMotors():    ##  two bytes command and one byte Reponse
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
     # print ("COMMAND: stopAllMotors ")
 
 #==========================================================================================
@@ -323,6 +326,9 @@ def homeAll():          ##  two byte command and one byte Reponse
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse2 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
     # print ("COMMAND: homeAll ")
 
@@ -367,6 +373,7 @@ def homeIFC():          ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 def homeIFD():          ##  Two byte command and one byte Reponse
+    global ARD2RPIresponse1
     # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
     register = 0            # Not used just setting to zero
     RPI2ARDcommand = 40  # This command goes to Arduino #2
@@ -376,7 +383,8 @@ def homeIFD():          ##  Two byte command and one byte Reponse
     IF2bus.writeList(register,RPI2ARDcommandList)  # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("COMMAND: homeIFD ")
+    print ("COMMAND: homeIFD ========")
+    time.sleep(1)
 
 #==========================================================================================
 def homeIFE():          ##  Two byte command and one byte Reponse
@@ -402,7 +410,7 @@ def homeIFF():          ##  Two byte command and one byte Reponse
     IF2bus.writeList(register,RPI2ARDcommandList) # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("COMMAND: homeIFF ")
+    print ("COMMAND: homeIFF ")
 
 #==========================================================================================
 def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
@@ -472,6 +480,73 @@ def IFCsetAngle(angle):         ##  Two byte command and one byte Reponse
 
 #==========================================================================================
 #==========================================================================================
+def IFDsetAngle(angle):          ##  Three byte command and one byte Reponse
+        # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
+
+    global IFD_integer_status, IFD_status
+    global error_string
+
+    if (angle < 0) or (angle > 90):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = 0
+
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 41      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand, angle, RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    # print ("11 - RESPONSE:   length of list: ", len(ARD2RPIresponse1), "   List:", ARD2RPIresponse1 )
+
+    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+        IFD_integer_status = ARD2RPIresponse1[0]
+
+#==========================================================================================
+def IFEsetAngle(angle):           ##  Two byte command and one byte Reponse
+    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
+    global IFE_integer_status, IFE_status
+    global error_string
+
+    if (angle < 0) or (angle > 90):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = 0
+
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 51      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    
+    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+        IFE_integer_status = ARD2RPIresponse1[0]
+
+#==========================================================================================
+def IFFCsetAngle(angle):         ##  Two byte command and one byte Reponse
+    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
+    global IFF_integer_status, IFF_status
+    global error_string
+
+    if (angle < 0) or (angle > 90):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = 0
+
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 61      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+        IFF_integer_status = ARD2RPIresponse1[0]
+
+#==========================================================================================
+#==========================================================================================
 def IFAsetCount(target_count):         ##  Three byte command and one byte Reponse
     global IFA_integer_status, IFA_status
 
@@ -536,6 +611,76 @@ def IFCsetCount(target_count):         ##  Three byte command and one byte Repon
 
 #==========================================================================================
 
+#==========================================================================================
+def IFDsetCount(target_count):         ##  Three byte command and one byte Reponse
+    global IFD_integer_status, IFD_status
+
+                           #   [0][CMD# 12][High Byte][Low Byte][Size of Response]
+    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 42      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+
+    target_count_high_byte = (target_count >> 8) & 0xff
+    target_count_low_byte = target_count % 256;   
+
+    RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
+                          RPI2ARDexpected_response_count]  #  Data sent to arduino
+    
+    # print ("target_count: ", target_count, "   High byte: ", target_count_high_byte, "  Low byte: ", target_count_low_byte)
+    # print ("RPI to Ard List: ", RPI2ARDcommandList)
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+        IFD_integer_status = ARD2RPIresponse1[0]
+
+#==========================================================================================
+def IFEsetCount(target_count):         ##  Three byte command and one byte Reponse
+    global IFE_integer_status, IFE_status
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 52      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+
+    target_count_high_byte = (target_count >> 8) & 0xff
+    target_count_low_byte = target_count % 256;   
+
+    RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
+                          RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+        IFE_integer_status = ARD2RPIresponse1[0]
+
+#==========================================================================================
+def IFFsetCount(target_count):         ##  Three byte command and one byte Reponse
+    global IFF_integer_status, IFF_status
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 62      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+
+    target_count_high_byte = (target_count >> 8) & 0xff
+    target_count_low_byte = target_count % 256;   
+
+
+    print ("COMMAND:62 ")
+    RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
+                          RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+        IFF_integer_status = ARD2RPIresponse1[0]
+
+#==========================================================================================
+
+
+#==========================================================================================
+
 # Command - Provide status of command  = Command, command // 
 # Response for spec command: [ Not started || In Process || Complete ]
 # >>	CTR = 2  => SL = 1 		Command = [90] [XX] // [Status IF-A][Status IF-B][Status IF-C]
@@ -578,7 +723,7 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
 # >>	CTR = 1  => SL = 6 		Command = [50]   // [A-High] [A-Low][B-High] [B-Low][C-High] [C-Low] 
 
 def request_all_interface_counts():
-    global IFA_count, IFB_count, IFC_count
+    global IFA_count, IFB_count, IFC_count, IFD_count, IFE_count, IFF_count
     # print ("91 - request_all_interface_counts()")
 
     register = 0            # Not used just setting to zero
@@ -593,6 +738,14 @@ def request_all_interface_counts():
     IFA_count = ARD2RPIresponse1[0] * 256 + ARD2RPIresponse1[1]
     IFB_count = ARD2RPIresponse1[2] * 256 + ARD2RPIresponse1[3]
     IFC_count = ARD2RPIresponse1[4] * 256 + ARD2RPIresponse1[5]
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    # print ("91 - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+
+    IFD_count = ARD2RPIresponse1[0] * 256 + ARD2RPIresponse1[1]
+    IFE_count = ARD2RPIresponse1[2] * 256 + ARD2RPIresponse1[3]
+    IFF_count = ARD2RPIresponse1[4] * 256 + ARD2RPIresponse1[5]
 
     # print ("50 - IFA_count: ", IFA_count, "   IFB_count: ", IFB_count, "     IFC_count: ", IFC_count, )
     # time.sleep(2.5)
@@ -730,6 +883,8 @@ def main():
             homeIFB()
             homeIFC()
 
+# - - (Home) - - -
+
         if userCommand == "10":
             homeIFA()
 
@@ -747,6 +902,7 @@ def main():
 
         if userCommand == "60":
             homeIFF()
+# - - (Set Angle) - - -
 
         if shortUserCommand == "11":
             IFAsetAngle(int(parameter))
@@ -756,6 +912,18 @@ def main():
 
         if shortUserCommand == "31":
             IFCsetAngle(int(parameter))
+
+        if shortUserCommand == "41":
+            IFDsetAngle(int(parameter))
+
+        if shortUserCommand == "51":
+            IFEsetAngle(int(parameter))
+
+        if shortUserCommand == "61":
+            IFFsetAngle(int(parameter))
+
+
+# - - (Set Count) - - -
 
         if shortUserCommand == "12":
             IFAsetCount(int(parameter))
@@ -769,6 +937,20 @@ def main():
             IFCsetCount(int(parameter))
             loop_for_status = True
 
+        if shortUserCommand == "42":
+            IFDsetCount(int(parameter))
+            loop_for_status = True
+
+        if shortUserCommand == "52":
+            IFEsetCount(int(parameter))
+            loop_for_status = True
+
+        if shortUserCommand == "62":
+            IFFsetCount(int(parameter))
+            loop_for_status = True
+
+# - - (Set Angle) - - -
+
         if shortUserCommand == "18":
             IFA_move_toward_home_for_1_second()
 
@@ -778,6 +960,7 @@ def main():
         if shortUserCommand == "38":
             IFC_move_toward_home_for_1_second()
 
+# - - (Forced movement) - - -
 
         if shortUserCommand == "19":
             IFA_move_from_below_home_for_1_second()
@@ -787,6 +970,8 @@ def main():
 
         if shortUserCommand == "39":
             IFC_move_from_below_home_for_1_second()
+
+# - - (Request status) - - -
 
         if shortUserCommand == "90":     # was 40
             request_all_interface_status()
