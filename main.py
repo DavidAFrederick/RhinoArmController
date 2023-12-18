@@ -57,6 +57,15 @@ IFF_angle = 0
 IFF_count = 0
 
 #==========================================================================================
+IF_A_one_second_count = 0
+IF_B_one_second_count = 0
+IF_C_one_second_count = 0
+IF_D_one_second_count = 0
+IF_E_one_second_count = 0
+IF_F_one_second_count = 0
+
+
+#==========================================================================================
 
 def map_interface_status_integer_to_text():
     global IFA_integer_status, IFA_status
@@ -154,6 +163,8 @@ def displaycoloredMenu():
     print ("%02d" % (IFA_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFA_count), end="" )
+    print("]  [", end="")
+    print ("%03d" % (IF_A_one_second_count), end="" )  
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -179,6 +190,8 @@ def displaycoloredMenu():
     print ("%02d" % (IFB_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFB_count), end="" )
+    print("]  [", end="")
+    print ("%03d" % (IF_B_one_second_count), end="" )  
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -204,6 +217,8 @@ def displaycoloredMenu():
     print ("%02d" % (IFC_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFC_count), end="" )
+    print("]  [", end="")
+    print ("%03d" % (IF_C_one_second_count), end="" )  
     print("]")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -918,6 +933,44 @@ def IFF_move_from_below_home_for_1_second():
 
     # print ("COMMAND: 69 - IF-F - Move away from home ")
 
+#==========================================================================================
+def IFA_pull_counts_after_one_second_of_movement():
+
+    global IF_A_one_second_count
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 17      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    print ("17 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    IF_A_one_second_count = ARD2RPIresponse1[0]
+
+def IFB_pull_counts_after_one_second_of_movement():
+    global IF_B_one_second_count
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 27      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    print ("27 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    IF_B_one_second_count = ARD2RPIresponse1[0]
+
+def IFC_pull_counts_after_one_second_of_movement():
+    global IF_C_one_second_count
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 37      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    print ("37 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    IF_C_one_second_count = ARD2RPIresponse1[0]
+
 
 #=(Main)===================================================================================
 
@@ -1062,7 +1115,8 @@ def main():
 
         if shortUserCommand == "68":
             IFF_move_toward_home_for_1_second()
-# ----
+
+# - - (Forced movement) - - -
 
         if shortUserCommand == "19":
             IFA_move_from_below_home_for_1_second()
@@ -1081,6 +1135,19 @@ def main():
 
         if shortUserCommand == "69":
             IFF_move_from_below_home_for_1_second()
+
+# - - (Request Counts after 1 second of movement) - - -
+
+        if shortUserCommand == "17":
+            IFA_pull_counts_after_one_second_of_movement()
+
+
+        if shortUserCommand == "27":
+            IFB_pull_counts_after_one_second_of_movement()
+
+
+        if shortUserCommand == "37":
+            IFC_pull_counts_after_one_second_of_movement()
 
 # - - (Request status) - - -
 
