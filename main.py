@@ -283,20 +283,22 @@ def displaycoloredMenu():
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-    print (" ")
+    # print (" ")
     print (F"{Style.BRIGHT}Commands:")
     print (F"{Style.NORMAL}Stop all   - 1")
     print ("Home all   - 2")
     print ("                             Joint Commands")
-    print (" ")
-    print ("              A        B        C        D        E        F   ")
-    print ("Home One   - 10,      20,      30,      40,      50,      60")
-    print ("Set Angle  - 11-xx,   21-xx,   31-xx,   41-xx,   51-xx,   61-xx")
+    # print (" ")
+    print ("              A        B        C        D        E        F     ")
+    print ("Home One   - 10,      20,      30,      40,      50,      60     ")
+    print ("Set Angle  - 11-xx,   21-xx,   31-xx,   41-xx,   51-xx,   61-xx  ")
     print ("Set Count  - 12-xxxx, 22-xxxx, 32-xxxx, 42-xxxx, 52-xxxx, 62-xxxx")
+    print ("Man-home   - 18       28       38       48       58       68     ")
+    print ("Man-Out    - 19       29       39       49       59       69     ")
     print (" ")
     print ("Get Status - 90")
-    print ("Set Count  - 91")
-    print (" ")
+    print ("Get Counts - 91")
+    # print (" ")
     print ("Exit - 0")
 
 #==========================================================================================
@@ -383,9 +385,6 @@ def homeIFD():          ##  Two byte command and one byte Reponse
     IF2bus.writeList(register,RPI2ARDcommandList)  # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
 
-    print ("COMMAND: homeIFD ========")
-    time.sleep(1)
-
 #==========================================================================================
 def homeIFE():          ##  Two byte command and one byte Reponse
     # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
@@ -410,7 +409,7 @@ def homeIFF():          ##  Two byte command and one byte Reponse
     IF2bus.writeList(register,RPI2ARDcommandList) # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
 
-    print ("COMMAND: homeIFF ")
+    # print ("COMMAND: homeIFF ")
 
 #==========================================================================================
 def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
@@ -525,7 +524,7 @@ def IFEsetAngle(angle):           ##  Two byte command and one byte Reponse
         IFE_integer_status = ARD2RPIresponse1[0]
 
 #==========================================================================================
-def IFFCsetAngle(angle):         ##  Two byte command and one byte Reponse
+def IFFsetAngle(angle):         ##  Two byte command and one byte Reponse
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
     global IFF_integer_status, IFF_status
     global error_string
@@ -666,7 +665,7 @@ def IFFsetCount(target_count):         ##  Three byte command and one byte Repon
     target_count_low_byte = target_count % 256;   
 
 
-    print ("COMMAND:62 ")
+    # print ("COMMAND:62 ")
     RPI2ARDcommandList = [RPI2ARDcommand, target_count_high_byte, target_count_low_byte, 
                           RPI2ARDexpected_response_count]  #  Data sent to arduino
 
@@ -706,11 +705,17 @@ def request_all_interface_status():  ##  two bytes command and three byte Repons
     IFB_integer_status = ARD2RPIresponse1[1]
     IFC_integer_status = ARD2RPIresponse1[2]
 
+    print ("90 ABC - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+
+    time.sleep(0.2)
+
     IF2bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-    IFD_integer_status = ARD2RPIresponse1[0]
-    IFE_integer_status = ARD2RPIresponse1[1]
-    IFF_integer_status = ARD2RPIresponse1[2]
+    ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    IFD_integer_status = ARD2RPIresponse2[0]
+    IFE_integer_status = ARD2RPIresponse2[1]
+    IFF_integer_status = ARD2RPIresponse2[2]
+
+    print ("90 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
 
     # print ("ARD2RPIresponse1 stat ",ARD2RPIresponse1 )
     # print ("IFA_stat: ", IFA_integer_status, "IFB_stat: ", IFB_integer_status, "IFC_stat: ",IFC_integer_status)
@@ -739,13 +744,18 @@ def request_all_interface_counts():
     IFB_count = ARD2RPIresponse1[2] * 256 + ARD2RPIresponse1[3]
     IFC_count = ARD2RPIresponse1[4] * 256 + ARD2RPIresponse1[5]
 
-    IF2bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-    # print ("91 - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    print ("91 ABC - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
 
-    IFD_count = ARD2RPIresponse1[0] * 256 + ARD2RPIresponse1[1]
-    IFE_count = ARD2RPIresponse1[2] * 256 + ARD2RPIresponse1[3]
-    IFF_count = ARD2RPIresponse1[4] * 256 + ARD2RPIresponse1[5]
+    time.sleep(0.2)
+
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    print ("91 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
+    # time.sleep(2.5)
+
+    IFD_count = ARD2RPIresponse2[0] * 256 + ARD2RPIresponse2[1]
+    IFE_count = ARD2RPIresponse2[2] * 256 + ARD2RPIresponse2[3]
+    IFF_count = ARD2RPIresponse2[4] * 256 + ARD2RPIresponse2[5]
 
     # print ("50 - IFA_count: ", IFA_count, "   IFB_count: ", IFB_count, "     IFC_count: ", IFC_count, )
     # time.sleep(2.5)
@@ -790,6 +800,46 @@ def IFC_move_toward_home_for_1_second():
 
     # print ("COMMAND: 38 - IF-C - Move toward home ")
 
+
+#==========================================================================================
+##  Move the Joint D away from home for 1 second
+def IFD_move_toward_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 48      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 48 - IF-D - Move toward home ")
+
+#==========================================================================================
+##  Move the Joint E away from home for 1 second
+def IFE_move_toward_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 58      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 58 - IF-E - Move toward home ")
+
+#==========================================================================================
+##  Move the Joint F away from home for 1 second
+def IFF_move_toward_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 68      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 68 - IF-F - Move toward home ")
+
 #==========================================================================================
 ##  Move the Joint A away from home for 1 second
 def IFA_move_from_below_home_for_1_second():
@@ -817,7 +867,7 @@ def IFB_move_from_below_home_for_1_second():
     # print ("COMMAND: 29 - IF-B - Move away from home ")
 
 #==========================================================================================
-##  Move the Joint A away from home for 1 second
+##  Move the Joint C away from home for 1 second
 def IFC_move_from_below_home_for_1_second():
     
     # All transfers to the Arduino include:  [the command],[Expected response size]
@@ -828,6 +878,45 @@ def IFC_move_from_below_home_for_1_second():
     IF1bus.writeList(register,RPI2ARDcommandList)
 
     # print ("COMMAND: 39 - IF-C - Move away from home ")
+
+#==========================================================================================
+##  Move the Joint D away from home for 1 second
+def IFD_move_from_below_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 49      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 49 - IF-D - Move away from home ")
+
+#==========================================================================================
+##  Move the Joint E away from home for 1 second
+def IFE_move_from_below_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 59      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 59 - IF-E - Move away from home ")
+
+#==========================================================================================
+##  Move the Joint F away from home for 1 second
+def IFF_move_from_below_home_for_1_second():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 69      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+
+    # print ("COMMAND: 69 - IF-F - Move away from home ")
 
 
 #=(Main)===================================================================================
@@ -849,13 +938,15 @@ def main():
         map_interface_status_integer_to_text()
         displaycoloredMenu()
 
+        loop_for_status = False
         if (loop_for_status):
             userCommand = "98"
             shortUserCommand = "98"
             loop_for_status = True
             print (">>> LOOPING <<<")
            
-            if (IFA_integer_status == 2) and (IFB_integer_status == 2) and (IFC_integer_status == 2):
+            if (IFA_integer_status == 2) and (IFB_integer_status == 2) and (IFC_integer_status == 2) \
+            and (IFD_integer_status == 2) and (IFE_integer_status == 2) and (IFF_integer_status == 2):
                 # print ("Stat  ",IFA_integer_status, "  ", IFB_integer_status,"  ",  IFC_integer_status)
                 loop_for_status = False
             else:
@@ -878,10 +969,13 @@ def main():
             stopAllMotors()
 
         if userCommand == "2":
-            homeAll()
+            # homeAll()
             homeIFA()
             homeIFB()
             homeIFC()
+            homeIFD()
+            homeIFE()
+            homeIFF()
 
 # - - (Home) - - -
 
@@ -949,7 +1043,7 @@ def main():
             IFFsetCount(int(parameter))
             loop_for_status = True
 
-# - - (Set Angle) - - -
+# - - (Forced movement) - - -
 
         if shortUserCommand == "18":
             IFA_move_toward_home_for_1_second()
@@ -960,7 +1054,15 @@ def main():
         if shortUserCommand == "38":
             IFC_move_toward_home_for_1_second()
 
-# - - (Forced movement) - - -
+        if shortUserCommand == "48":
+            IFD_move_toward_home_for_1_second()
+
+        if shortUserCommand == "58":
+            IFE_move_toward_home_for_1_second()
+
+        if shortUserCommand == "68":
+            IFF_move_toward_home_for_1_second()
+# ----
 
         if shortUserCommand == "19":
             IFA_move_from_below_home_for_1_second()
@@ -970,6 +1072,15 @@ def main():
 
         if shortUserCommand == "39":
             IFC_move_from_below_home_for_1_second()
+
+        if shortUserCommand == "49":
+            IFD_move_from_below_home_for_1_second()
+
+        if shortUserCommand == "59":
+            IFE_move_from_below_home_for_1_second()
+
+        if shortUserCommand == "69":
+            IFF_move_from_below_home_for_1_second()
 
 # - - (Request status) - - -
 
