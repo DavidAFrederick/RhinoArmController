@@ -2,6 +2,7 @@ from colorama import Fore, Back, Style
 import os
 import smbus
 import time
+from datetime import datetime
 import sys
 import logging
 from adafruit_I2C_lib import I2C
@@ -30,31 +31,37 @@ IFA_status = "Unknown"
 IFA_integer_status = 0
 IFA_angle = 0              
 IFA_count = 0
+IFA_limit_switch = 0
 
 IFB_status = "Unknown"
 IFB_integer_status = 0
 IFB_angle = 0              
 IFB_count = 0
+IFB_limit_switch = 0
 
 IFC_status = "Unknown"
 IFC_integer_status = 0
 IFC_angle = 0              
 IFC_count = 0
+IFC_limit_switch = 0
 
 IFD_status = "Unknown"
 IFD_integer_status = 0
 IFD_angle = 0              
 IFD_count = 0
+IFD_limit_switch = 0
 
 IFE_status = "Unknown"
 IFE_integer_status = 0
 IFE_angle = 0              
 IFE_count = 0
+IFE_limit_switch = 0
 
 IFF_status = "Unknown"
 IFF_integer_status = 0
 IFF_angle = 0              
 IFF_count = 0
+IFF_limit_switch = 0
 
 #==========================================================================================
 IF_A_one_second_count = 0
@@ -434,6 +441,94 @@ def homeIFF():          ##  Two byte command and one byte Reponse
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
 
     # print ("COMMAND: homeIFF ")
+
+#==========================================================================================
+def readLimitSwitches():
+
+    global IFA_limit_switch, IFB_limit_switch, IFC_limit_switch
+    global IFD_limit_switch, IFE_limit_switch, IFF_limit_switch
+
+    IFA_previous_limit_switch = IFA_limit_switch
+    IFB_previous_limit_switch = IFB_limit_switch
+    IFC_previous_limit_switch = IFC_limit_switch
+    IFD_previous_limit_switch = IFD_limit_switch
+    IFE_previous_limit_switch = IFE_limit_switch
+    IFF_previous_limit_switch = IFF_limit_switch
+
+    seconds_to_loop = 30
+    start_time = time.time()
+    done = False
+
+    print ("Starting to monitor the Limit Switches")
+
+    while not done:
+        register = 0            # Not used just setting to zero
+        RPI2ARDcommand = 3      # This command
+        RPI2ARDexpected_response_count = 3  # count of bytes to be in the response
+        RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        IFA_limit_switch = ARD2RPIresponse1[0]
+        IFB_limit_switch = ARD2RPIresponse1[1]
+        IFC_limit_switch = ARD2RPIresponse1[2]
+        
+        time.sleep(0.1)
+
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        IFD_limit_switch = ARD2RPIresponse2[0]
+        IFE_limit_switch = ARD2RPIresponse2[1]
+        IFF_limit_switch = ARD2RPIresponse2[2]
+
+    # Returns zero when limit switch engaged
+
+        # print ("3 Limit Switches A, B, C:  ",ARD2RPIresponse1, "   Limit Switches D, E, F:  ",ARD2RPIresponse2)
+
+        if (IFA_previous_limit_switch != IFA_limit_switch) and ( not IFA_limit_switch ):
+            print ("Limit Switch A - engaged")
+        if (IFA_previous_limit_switch != IFA_limit_switch) and ( IFA_limit_switch ):
+            print ("Limit Switch A - released")
+
+        if (IFB_previous_limit_switch != IFB_limit_switch) and ( not IFB_limit_switch ):
+            print ("Limit Switch B - engaged")
+        if (IFB_previous_limit_switch != IFB_limit_switch) and ( IFB_limit_switch ):
+            print ("Limit Switch B - released")
+
+        if (IFC_previous_limit_switch != IFC_limit_switch) and ( not IFC_limit_switch ):
+            print ("Limit Switch C - engaged")
+        if (IFC_previous_limit_switch != IFC_limit_switch) and ( IFC_limit_switch ):
+            print ("Limit Switch C - released")
+
+        if (IFD_previous_limit_switch != IFD_limit_switch) and ( not IFD_limit_switch ):
+            print ("Limit Switch D - engaged")
+        if (IFD_previous_limit_switch != IFD_limit_switch) and ( IFD_limit_switch ):
+            print ("Limit Switch D - released")
+
+        if (IFE_previous_limit_switch != IFE_limit_switch) and ( not IFE_limit_switch ):
+            print ("Limit Switch E - engaged")
+        if (IFE_previous_limit_switch != IFE_limit_switch) and ( IFE_limit_switch ):
+            print ("Limit Switch E - released")
+
+        if (IFF_previous_limit_switch != IFF_limit_switch) and ( not IFF_limit_switch ):
+            print ("Limit Switch F - engaged")
+        if (IFF_previous_limit_switch != IFF_limit_switch) and ( IFF_limit_switch ):
+            print ("Limit Switch F - released")
+
+        time.sleep(0.1)
+
+        IFA_previous_limit_switch = IFA_limit_switch
+        IFB_previous_limit_switch = IFB_limit_switch
+        IFC_previous_limit_switch = IFC_limit_switch
+        IFD_previous_limit_switch = IFD_limit_switch
+        IFE_previous_limit_switch = IFE_limit_switch
+        IFF_previous_limit_switch = IFF_limit_switch
+
+        current_time = time.time()
+        if ((current_time-start_time) > seconds_to_loop):
+            done = True
+
+    print ("Stopped monitor the Limit Switches")
 
 #==========================================================================================
 def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
@@ -1181,6 +1276,9 @@ def main():
             homeIFD()
             homeIFE()
             homeIFF()
+
+        if userCommand == "3":   # read Limit switches for self-test
+            readLimitSwitches()
 
 # - - (Home) - - -
 
