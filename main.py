@@ -6,7 +6,7 @@ import sys
 import logging
 from adafruit_I2C_lib import I2C
 
-##  Dec 20, 2023 - Adding second arduino
+##  Dec 21, 2023 - Adding second arduino
 """
 ToDo
 ) Figure why command 90 is not working
