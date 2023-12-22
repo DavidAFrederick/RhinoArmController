@@ -314,6 +314,7 @@ def displaycoloredMenu():
     print ("Home One   - 10,      20,      30,      40,      50,      60     ")
     print ("Set Angle  - 11-xx,   21-xx,   31-xx,   41-xx,   51-xx,   61-xx  ")
     print ("Set Count  - 12-xxxx, 22-xxxx, 32-xxxx, 42-xxxx, 52-xxxx, 62-xxxx")
+    print ("Find Home  - 15       25       35       45       55       65     ")
     print ("SelfTest   - 16       26       36       46       56       66     ")
     print ("Get 1 Sec  - 17       27       37       47       57       67     ")
     print ("Man-home   - 18       28       38       48       58       68     ")
@@ -783,6 +784,94 @@ def request_all_interface_counts():
 
     # print ("50 - IFA_count: ", IFA_count, "   IFB_count: ", IFB_count, "     IFC_count: ", IFC_count, )
     # time.sleep(2.5)
+#==(15)=====================================================================================
+
+#==========================================================================================
+##  Move the Joint A away from home for 1 second
+def IFA_move_slowly_to_home():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 15      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    time.sleep(1.5)
+
+    # print ("COMMAND: 15 - IF-A - Long way to home ")
+
+#==========================================================================================
+##  Move the Joint B away from home for 1 second
+def IFB_move_slowly_to_home():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 25      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    time.sleep(1.5)
+
+    # print ("COMMAND: 25 - IF-B - Long way to home ")
+
+#==========================================================================================
+##  Move the Joint C away from home for 1 second
+def IFC_move_slowly_to_home():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 35      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF1bus.writeList(register,RPI2ARDcommandList)
+    time.sleep(1.5)
+
+    # print ("COMMAND: 35 - IF-C - Long way to home ")
+
+
+#==========================================================================================
+##  Move the Joint D away from home for 1 second
+def IFD_move_slowly_to_home():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 45      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    time.sleep(1.5)
+
+    # print ("COMMAND: 45 - IF-D - Long way to home ")
+
+#==========================================================================================
+##  Move the Joint E away from home for 1 second
+def IFE_move_slowly_to_home():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 55      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    time.sleep(1.5)
+
+    # print ("COMMAND: 55 - IF-E - Long way to home ")
+
+#==========================================================================================
+##  Move the Joint F away from home for 1 second
+def IFF_move_slowly_to_home():
+    
+    # All transfers to the Arduino include:  [the command],[Expected response size]
+    register = 0            # Not used just setting to zero
+    RPI2ARDcommand = 65      # This command
+    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    IF2bus.writeList(register,RPI2ARDcommandList)
+    time.sleep(1.5)
+
+    # print ("COMMAND: 65 - IF-F - Long way to home ")
+
+#==========================================================================================
 
 
 #==========================================================================================
@@ -965,7 +1054,7 @@ def IFA_pull_counts_after_one_second_of_movement():
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-    print ("17 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    # print ("17 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
     IF_A_one_second_count = ARD2RPIresponse1[0]
     time.sleep(0.5)
 
@@ -978,7 +1067,7 @@ def IFB_pull_counts_after_one_second_of_movement():
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-    print ("27 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    # print ("27 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
     IF_B_one_second_count = ARD2RPIresponse1[0]
     time.sleep(0.5)
 
@@ -991,7 +1080,7 @@ def IFC_pull_counts_after_one_second_of_movement():
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-    print ("37 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
+    # print ("37 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
     IF_C_one_second_count = ARD2RPIresponse1[0]
     time.sleep(0.5)
 
@@ -1005,7 +1094,7 @@ def IFD_pull_counts_after_one_second_of_movement():
 
     IF2bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-    print ("47 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
+    # print ("47 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
     IF_D_one_second_count = ARD2RPIresponse2[0]
     time.sleep(0.5)
 
@@ -1018,7 +1107,7 @@ def IFE_pull_counts_after_one_second_of_movement():
 
     IF2bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-    print ("57 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
+    # print ("57 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
     IF_E_one_second_count = ARD2RPIresponse2[0]
     time.sleep(0.5)
 
@@ -1031,7 +1120,7 @@ def IFF_pull_counts_after_one_second_of_movement():
 
     IF2bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-    print ("67 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
+    # print ("67 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
     IF_F_one_second_count = ARD2RPIresponse2[0]
     time.sleep(0.5)
 
@@ -1159,6 +1248,27 @@ def main():
             IFFsetCount(int(parameter))
             loop_for_status = True
 
+# - - (Find home long way) - - -
+        if shortUserCommand == "15":
+            IFA_move_slowly_to_home()
+
+        if shortUserCommand == "25":
+            IFB_move_slowly_to_home()
+
+        if shortUserCommand == "35":
+            IFC_move_slowly_to_home()
+
+        if shortUserCommand == "45":
+            IFD_move_slowly_to_home()
+
+        if shortUserCommand == "55":
+            IFE_move_slowly_to_home()
+
+        if shortUserCommand == "65":
+            IFF_move_slowly_to_home()
+
+
+
 # - - (Self Test) - - -
 
         if userCommand == "6":
@@ -1217,6 +1327,27 @@ def main():
             IFF_move_away_from_home_for_1_second()
             IFF_pull_counts_after_one_second_of_movement()
 
+
+# - - (Request Counts after 1 second of movement) - - -
+
+        if shortUserCommand == "17":
+            IFA_pull_counts_after_one_second_of_movement()
+
+        if shortUserCommand == "27":
+            IFB_pull_counts_after_one_second_of_movement()
+
+        if shortUserCommand == "37":
+            IFC_pull_counts_after_one_second_of_movement()
+
+        if shortUserCommand == "47":
+            IFD_pull_counts_after_one_second_of_movement()
+
+        if shortUserCommand == "57":
+            IFE_pull_counts_after_one_second_of_movement()
+
+        if shortUserCommand == "67":
+            IFF_pull_counts_after_one_second_of_movement()
+
 # - - (Forced movement) - - -
 
         if shortUserCommand == "18":
@@ -1257,25 +1388,6 @@ def main():
         if shortUserCommand == "69":
             IFF_move_away_from_home_for_1_second()
 
-# - - (Request Counts after 1 second of movement) - - -
-
-        if shortUserCommand == "17":
-            IFA_pull_counts_after_one_second_of_movement()
-
-        if shortUserCommand == "27":
-            IFB_pull_counts_after_one_second_of_movement()
-
-        if shortUserCommand == "37":
-            IFC_pull_counts_after_one_second_of_movement()
-
-        if shortUserCommand == "47":
-            IFD_pull_counts_after_one_second_of_movement()
-
-        if shortUserCommand == "57":
-            IFE_pull_counts_after_one_second_of_movement()
-
-        if shortUserCommand == "67":
-            IFF_pull_counts_after_one_second_of_movement()
 
 # - - (Request status) - - -
 
