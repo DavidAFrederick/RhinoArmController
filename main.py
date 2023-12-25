@@ -313,8 +313,11 @@ def displaycoloredMenu():
 
     # print (" ")
     print (F"{Style.BRIGHT}Commands:")
-    print (F"{Style.NORMAL}Stop all   - 1")
-    print ("Home all   - 2")
+    print (F"{Style.NORMAL}Stop all - 1")
+    print ("Home all                - 2")
+    print ("Test Home Switches      - 3")
+    print ("Find Home for all       - 5")
+    print ("Self Test All           - 6")
     print ("                             Joint Commands")
     # print (" ")
     print ("              A        B        C        D        E        F     ")
@@ -455,7 +458,7 @@ def readLimitSwitches():
     IFE_previous_limit_switch = IFE_limit_switch
     IFF_previous_limit_switch = IFF_limit_switch
 
-    seconds_to_loop = 30
+    seconds_to_loop = 60
     start_time = time.time()
     done = False
 
@@ -1280,6 +1283,21 @@ def main():
         if userCommand == "3":   # read Limit switches for self-test
             readLimitSwitches()
 
+        if userCommand == "5":   # Carefully find home on all interfaces 
+            delay_between_commands = 20
+            IFA_move_slowly_to_home()
+            time.sleep(delay_between_commands)
+            IFB_move_slowly_to_home()
+            time.sleep(delay_between_commands)
+            IFC_move_slowly_to_home()
+            time.sleep(delay_between_commands)
+            IFD_move_slowly_to_home()
+            time.sleep(delay_between_commands)
+            IFE_move_slowly_to_home()
+            time.sleep(delay_between_commands)
+            IFF_move_slowly_to_home()
+
+        
 # - - (Home) - - -
 
         if userCommand == "10":
