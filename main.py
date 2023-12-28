@@ -26,6 +26,7 @@ IF2bus = I2C(addressInterface2)
 
 loop_for_status = True
 error_string = "     "
+response_counter_limit = 400
 
 IFA_status = "Unknown"
 IFA_integer_status = 0
@@ -352,21 +353,21 @@ def stopAllMotors():    ##  two bytes command and one byte Reponse
 
     # print ("COMMAND: stopAllMotors ")
 
-#==========================================================================================
-def homeAll():          ##  two byte command and one byte Reponse
-    # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 2      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+# #==========================================================================================
+# def homeAll():          ##  two byte command and one byte Reponse
+#     # All transfers to the Arduino include:  [the command],[Data (optional)], [Expected response size]
+#     register = 0            # Not used just setting to zero
+#     RPI2ARDcommand = 2      # This command
+#     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
+#     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
 
-    IF1bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+#     IF1bus.writeList(register,RPI2ARDcommandList)
+#     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    IF2bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse2 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+#     IF2bus.writeList(register,RPI2ARDcommandList)
+#     ARD2RPIresponse2 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
-    # print ("COMMAND: homeAll ")
+#     # print ("COMMAND: homeAll ")
 
 #==========================================================================================
 def homeIFA():          ##  Two byte command and one byte Reponse
@@ -375,9 +376,31 @@ def homeIFA():          ##  Two byte command and one byte Reponse
     RPI2ARDcommand = 10      # This command
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+        
 
     # print ("COMMAND: homeIFA ")
 
@@ -392,6 +415,28 @@ def homeIFB():          ##  Two byte command and one byte Reponse
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
     # print ("COMMAND:  homeIFB")
 
 #==========================================================================================
@@ -404,6 +449,28 @@ def homeIFC():          ##  Two byte command and one byte Reponse
 
     IF1bus.writeList(register,RPI2ARDcommandList)
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
     # print ("COMMAND: homeIFC ")
 
@@ -418,6 +485,31 @@ def homeIFD():          ##  Two byte command and one byte Reponse
 
     IF2bus.writeList(register,RPI2ARDcommandList)  # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
+    # print ("COMMAND: homeIFD ")
 
 #==========================================================================================
 def homeIFE():          ##  Two byte command and one byte Reponse
@@ -429,6 +521,28 @@ def homeIFE():          ##  Two byte command and one byte Reponse
 
     IF2bus.writeList(register,RPI2ARDcommandList) # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
     # print ("COMMAND: homeIFE ")
 
@@ -442,6 +556,28 @@ def homeIFF():          ##  Two byte command and one byte Reponse
 
     IF2bus.writeList(register,RPI2ARDcommandList) # Arduino #2
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
     # print ("COMMAND: homeIFF ")
 
@@ -557,6 +693,29 @@ def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFA_integer_status = ARD2RPIresponse1[0]
 
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 #==========================================================================================
 def IFBsetAngle(angle):           ##  Two byte command and one byte Reponse
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
@@ -578,6 +737,28 @@ def IFBsetAngle(angle):           ##  Two byte command and one byte Reponse
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFB_integer_status = ARD2RPIresponse1[0]
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 #==========================================================================================
 def IFCsetAngle(angle):         ##  Two byte command and one byte Reponse
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
@@ -598,6 +779,28 @@ def IFCsetAngle(angle):         ##  Two byte command and one byte Reponse
 
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFC_integer_status = ARD2RPIresponse1[0]
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 #==========================================================================================
@@ -624,6 +827,28 @@ def IFDsetAngle(angle):          ##  Three byte command and one byte Reponse
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFD_integer_status = ARD2RPIresponse1[0]
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 #==========================================================================================
 def IFEsetAngle(angle):           ##  Two byte command and one byte Reponse
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
@@ -645,6 +870,28 @@ def IFEsetAngle(angle):           ##  Two byte command and one byte Reponse
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFE_integer_status = ARD2RPIresponse1[0]
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 #==========================================================================================
 def IFFsetAngle(angle):         ##  Two byte command and one byte Reponse
     # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
@@ -665,6 +912,28 @@ def IFFsetAngle(angle):         ##  Two byte command and one byte Reponse
 
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFF_integer_status = ARD2RPIresponse1[0]
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 #==========================================================================================
@@ -692,6 +961,30 @@ def IFAsetCount(target_count):         ##  Three byte command and one byte Repon
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFA_integer_status = ARD2RPIresponse1[0]
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+        
+
+
 #==========================================================================================
 def IFBsetCount(target_count):         ##  Three byte command and one byte Reponse
     global IFB_integer_status, IFB_status
@@ -711,6 +1004,28 @@ def IFBsetCount(target_count):         ##  Three byte command and one byte Repon
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFB_integer_status = ARD2RPIresponse1[0]
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 #==========================================================================================
 def IFCsetCount(target_count):         ##  Three byte command and one byte Reponse
     global IFC_integer_status, IFC_status
@@ -729,6 +1044,32 @@ def IFCsetCount(target_count):         ##  Three byte command and one byte Repon
 
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFC_integer_status = ARD2RPIresponse1[0]
+
+# While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    print ("last_command_complete:: ", last_command_complete)
+    print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        print ("last_command_complete:: ", last_command_complete)
+        print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+        
 
 #==========================================================================================
 
@@ -757,6 +1098,29 @@ def IFDsetCount(target_count):         ##  Three byte command and one byte Repon
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFD_integer_status = ARD2RPIresponse1[0]
 
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
+
 #==========================================================================================
 def IFEsetCount(target_count):         ##  Three byte command and one byte Reponse
     global IFE_integer_status, IFE_status
@@ -775,6 +1139,28 @@ def IFEsetCount(target_count):         ##  Three byte command and one byte Repon
 
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
         IFE_integer_status = ARD2RPIresponse1[0]
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 def IFFsetCount(target_count):         ##  Three byte command and one byte Reponse
@@ -795,7 +1181,29 @@ def IFFsetCount(target_count):         ##  Three byte command and one byte Repon
     ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
 
     if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
+
         IFF_integer_status = ARD2RPIresponse1[0]
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED")
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 
@@ -894,9 +1302,31 @@ def IFA_move_slowly_to_home():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 15 - IF-A - Long way to home ")
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED: ", response_counter_limit)
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 ##  Move the Joint B away from home for 1 second
@@ -908,9 +1338,32 @@ def IFB_move_slowly_to_home():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 25 - IF-B - Long way to home ")
+
+        # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED: ", response_counter_limit)
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 
 #==========================================================================================
 ##  Move the Joint C away from home for 1 second
@@ -922,9 +1375,31 @@ def IFC_move_slowly_to_home():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    ##### time.sleep(1.0)
 
     # print ("COMMAND: 35 - IF-C - Long way to home ")
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF1bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED: ", response_counter_limit)
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 
 #==========================================================================================
@@ -937,9 +1412,32 @@ def IFD_move_slowly_to_home():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 45 - IF-D - Long way to home ")
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED: ", response_counter_limit)
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+
 
 #==========================================================================================
 ##  Move the Joint E away from home for 1 second
@@ -951,9 +1449,31 @@ def IFE_move_slowly_to_home():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 55 - IF-E - Long way to home ")
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED: ", response_counter_limit)
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 ##  Move the Joint F away from home for 1 second
@@ -965,9 +1485,31 @@ def IFF_move_slowly_to_home():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 65 - IF-F - Long way to home ")
+
+    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
+
+    #  Command 91 is requesting status
+    last_command_complete = False
+    response_counter = 0
+    RPI2ARDcommand = 91
+    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
+    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+
+    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
+        time.sleep(0.1)
+        IF2bus.writeList(register,RPI2ARDcommandList)
+        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+        last_command_complete = ARD2RPIresponse1[6]
+        response_counter = response_counter + 1
+        if (response_counter > response_counter_limit):
+            print ("ERROR LAST COMMAND NOT COMPLETED: ", response_counter_limit)
+            last_command_complete = True
+            
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 
@@ -982,7 +1524,7 @@ def IFA_move_toward_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 18 - IF-A - Move toward home ")
 
@@ -996,7 +1538,7 @@ def IFB_move_toward_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 28 - IF-B - Move toward home ")
 
@@ -1010,7 +1552,7 @@ def IFC_move_toward_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 38 - IF-C - Move toward home ")
 
@@ -1025,7 +1567,7 @@ def IFD_move_toward_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 48 - IF-D - Move toward home ")
 
@@ -1039,7 +1581,7 @@ def IFE_move_toward_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 58 - IF-E - Move toward home ")
 
@@ -1053,7 +1595,7 @@ def IFF_move_toward_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 68 - IF-F - Move toward home ")
 
@@ -1067,7 +1609,7 @@ def IFA_move_away_from_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 19 - IF-A - Move away from home ")
 
@@ -1081,7 +1623,7 @@ def IFB_move_away_from_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 29 - IF-B - Move away from home ")
 
@@ -1095,7 +1637,7 @@ def IFC_move_away_from_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF1bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 39 - IF-C - Move away from home ")
 
@@ -1109,7 +1651,7 @@ def IFD_move_away_from_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 49 - IF-D - Move away from home ")
 
@@ -1123,7 +1665,7 @@ def IFE_move_away_from_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 59 - IF-E - Move away from home ")
 
@@ -1137,7 +1679,7 @@ def IFF_move_away_from_home_for_1_second():
     RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
     IF2bus.writeList(register,RPI2ARDcommandList)
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # print ("COMMAND: 69 - IF-F - Move away from home ")
 
@@ -1154,7 +1696,9 @@ def IFA_pull_counts_after_one_second_of_movement():
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
     # print ("17 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
     IF_A_one_second_count = ARD2RPIresponse1[0]
-    time.sleep(0.5)
+    print ("Joint A - one second count: ", IF_A_one_second_count)
+    time.sleep(2)
+
 
 def IFB_pull_counts_after_one_second_of_movement():
     global IF_B_one_second_count
@@ -1167,7 +1711,9 @@ def IFB_pull_counts_after_one_second_of_movement():
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
     # print ("27 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
     IF_B_one_second_count = ARD2RPIresponse1[0]
-    time.sleep(0.5)
+    print ("Joint B - one second count: ", IF_B_one_second_count)
+    time.sleep(2)
+
 
 def IFC_pull_counts_after_one_second_of_movement():
     global IF_C_one_second_count
@@ -1180,7 +1726,9 @@ def IFC_pull_counts_after_one_second_of_movement():
     ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
     # print ("37 DEF - ARD2RPIresponse1:  ",ARD2RPIresponse1, "  Length: ", len(ARD2RPIresponse1))
     IF_C_one_second_count = ARD2RPIresponse1[0]
-    time.sleep(0.5)
+    print ("Joint C - one second count: ", IF_C_one_second_count)
+    time.sleep(2)
+
 
 def IFD_pull_counts_after_one_second_of_movement():
 
@@ -1194,7 +1742,8 @@ def IFD_pull_counts_after_one_second_of_movement():
     ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
     # print ("47 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
     IF_D_one_second_count = ARD2RPIresponse2[0]
-    time.sleep(0.5)
+    print ("Joint D - one second count: ", IF_D_one_second_count)
+    time.sleep(2)
 
 def IFE_pull_counts_after_one_second_of_movement():
     global IF_E_one_second_count
@@ -1207,7 +1756,8 @@ def IFE_pull_counts_after_one_second_of_movement():
     ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
     # print ("57 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
     IF_E_one_second_count = ARD2RPIresponse2[0]
-    time.sleep(0.5)
+    print ("Joint E - one second count: ", IF_E_one_second_count)
+    time.sleep(2)
 
 def IFF_pull_counts_after_one_second_of_movement():
     global IF_F_one_second_count
@@ -1220,7 +1770,8 @@ def IFF_pull_counts_after_one_second_of_movement():
     ARD2RPIresponse2 = IF2bus.readList(register, RPI2ARDexpected_response_count)
     # print ("67 DEF - ARD2RPIresponse2:  ",ARD2RPIresponse2, "  Length: ", len(ARD2RPIresponse2))
     IF_F_one_second_count = ARD2RPIresponse2[0]
-    time.sleep(0.5)
+    print ("Joint F - one second count: ", IF_F_one_second_count)
+    time.sleep(2)
 
 #=(Main)===================================================================================
 
@@ -1272,13 +1823,32 @@ def main():
             stopAllMotors()
 
         if userCommand == "2":
-            # homeAll()
+            IFA_move_away_from_home_for_1_second()
             homeIFA()
+            IFB_move_away_from_home_for_1_second()
             homeIFB()
+            IFC_move_away_from_home_for_1_second()
             homeIFC()
+            print ("1")
+            IFD_move_away_from_home_for_1_second()
+            print ("2")
+            time.sleep(2)
             homeIFD()
+            time.sleep(2)
+            print ("3")
+            time.sleep(2)
+            IFE_move_away_from_home_for_1_second()
+            print ("4")
+            time.sleep(2)
             homeIFE()
+            time.sleep(2)
+            print ("5")
+            IFF_move_away_from_home_for_1_second()
+            print ("6")
+            time.sleep(2)
             homeIFF()
+            time.sleep(2)
+            print ("7")
 
         if userCommand == "3":   # read Limit switches for self-test
             readLimitSwitches()
@@ -1291,6 +1861,7 @@ def main():
             time.sleep(delay_between_commands)
             IFC_move_slowly_to_home()
             time.sleep(delay_between_commands)
+            
             IFD_move_slowly_to_home()
             time.sleep(delay_between_commands)
             IFE_move_slowly_to_home()
@@ -1301,7 +1872,9 @@ def main():
 # - - (Home) - - -
 
         if userCommand == "10":
+            print ("Calling home a")
             homeIFA()
+            print ("Done Calling home a")
 
         if userCommand == "20":
             homeIFB()
