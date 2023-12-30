@@ -7,6 +7,9 @@ import sys
 import logging
 from adafruit_I2C_lib import I2C
 
+
+from inputimeout import inputimeout, TimeoutOccurred
+
 ##  Dec 27, 2023
 """
 ToDo
@@ -146,9 +149,9 @@ def displaycoloredMenu():
     IFX_status_display_Unknown = " Unknown   "
 
     # os.system('clear')   
-    print ("================================================================")
-    print ("|                                  Status       Angle    Count |")
-    print ("================================================================")
+    print ("===========================================================================")
+    print ("|                                  Status       Angle    Count   Rots/sec |")
+    print ("===========================================================================")
     print ("Interface A [ Gripper Pinch  ] - [", end="")    
  
     IFA_status_display = ""
@@ -314,7 +317,7 @@ def displaycoloredMenu():
 
     # print (" ")
     print (F"{Style.BRIGHT}Commands:")
-    print (F"{Style.NORMAL}Stop all - 1")
+    print (F"{Style.NORMAL}Stop all                - 1")
     print ("Home all                - 2")
     print ("Test Home Switches      - 3")
     print ("Find Home for all       - 5")
@@ -1054,8 +1057,8 @@ def IFCsetCount(target_count):         ##  Three byte command and one byte Repon
     RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
     RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
 
-    print ("last_command_complete:: ", last_command_complete)
-    print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+    # print ("last_command_complete:: ", last_command_complete)
+    # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
     while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
         time.sleep(0.1)
@@ -1067,8 +1070,8 @@ def IFCsetCount(target_count):         ##  Three byte command and one byte Repon
             print ("ERROR LAST COMMAND NOT COMPLETED")
             last_command_complete = True
             
-        print ("last_command_complete:: ", last_command_complete)
-        print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+        # print ("last_command_complete:: ", last_command_complete)
+        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
         
 
 #==========================================================================================
@@ -1773,6 +1776,62 @@ def IFF_pull_counts_after_one_second_of_movement():
     print ("Joint F - one second count: ", IF_F_one_second_count)
     time.sleep(2)
 
+#==========================================================================================
+def check_for_Joint_D_and_E_interference(target_IF_D_Count):
+    ''' This code checks to see if the count for Joint D (Elbow) motion needs to be modified to prevent
+     interference with Joint E (Shoulder) '''
+
+    revised_target_IF_D_Count = target_IF_D_Count
+
+    if (IFE_count <= 275) :
+        max_IF_D_Count = IFE_count + 100
+        revised_target_IF_D_Count = min(target_IF_D_Count, max_IF_D_Count)
+
+    if ( (IFE_count > 275) and (IFE_count <= 325) ):
+        max_IF_D_Count = IFE_count + 150
+        revised_target_IF_D_Count = min(target_IF_D_Count, max_IF_D_Count)
+
+    if ( (IFE_count > 325) and (IFE_count <= 700) ):
+        max_IF_D_Count = IFE_count + 200
+        revised_target_IF_D_Count = min(target_IF_D_Count, max_IF_D_Count)
+
+    if (IFE_count >= 700):
+        max_IF_D_Count = IFE_count 
+        revised_target_IF_D_Count = min(target_IF_D_Count, max_IF_D_Count)
+
+    print ("42: Desired Elbow value: ", target_IF_D_Count, "    Limited Elbow value: ", revised_target_IF_D_Count)
+    
+    return revised_target_IF_D_Count
+
+
+def check_for_Joint_E_and_D_interference(target_IF_E_Count):
+    ''' This code checks to see if the count for Joint E (Shoulder) motion needs to be modified to 
+    prevent interference with Joint D (Elbow)  '''
+   
+    revised_target_IF_E_Count = target_IF_E_Count
+
+    if (IFD_count <= 350) :
+        max_IF_E_Count = IFD_count + 100
+        revised_target_IF_E_Count = min(target_IF_E_Count, max_IF_E_Count)
+
+    if ((IFD_count > 350) and (IFD_count <= 550) ):
+        max_IF_E_Count = IFE_count + 150
+        revised_target_IF_E_Count = min(target_IF_E_Count, max_IF_E_Count)
+
+    if ((IFD_count > 550) and (IFD_count <= 700) ):
+        max_IF_E_Count = IFE_count + 200
+        revised_target_IF_E_Count = min(target_IF_E_Count, max_IF_E_Count)
+
+    if (IFD_count >= 700):
+        max_IF_E_Count = IFE_count 
+        revised_target_IF_E_Count = min(target_IF_E_Count, max_IF_E_Count)
+
+    print ("52: Desired Shoulder value: ", target_IF_E_Count, "    Limited Shoulder value: ", revised_target_IF_E_Count)
+
+
+    return revised_target_IF_E_Count 
+
+
 #=(Main)===================================================================================
 
 def main():
@@ -1806,8 +1865,17 @@ def main():
             else:
                 loop_for_status = True
         else:
+
+            # # Read the user input but timeout and update status
+            # ###  Source:  https://stackoverflow.com/questions/1335507/keyboard-input-with-timeout
+            # try:
+            #     userCommand = inputimeout(prompt='>>>\n', timeout=10)
+            # except TimeoutOccurred:
+            #     userCommand = 'timeout'
+            # # print(c)
+
             userCommand = input(">>")
-            shortUserCommand = "99"    
+            shortUserCommand = "98"  ## was 99    
 
             if (len(userCommand) >= 2):
                 shortUserCommand = userCommand[0:2]
@@ -1823,32 +1891,30 @@ def main():
             stopAllMotors()
 
         if userCommand == "2":
+            after_homing_delay = 1
             IFA_move_away_from_home_for_1_second()
             homeIFA()
+            time.sleep(after_homing_delay)
+
             IFB_move_away_from_home_for_1_second()
             homeIFB()
+            time.sleep(after_homing_delay)
+
             IFC_move_away_from_home_for_1_second()
             homeIFC()
-            print ("1")
+            time.sleep(after_homing_delay)
+
             IFD_move_away_from_home_for_1_second()
-            print ("2")
-            time.sleep(2)
             homeIFD()
-            time.sleep(2)
-            print ("3")
-            time.sleep(2)
+            time.sleep(after_homing_delay)
+
             IFE_move_away_from_home_for_1_second()
-            print ("4")
-            time.sleep(2)
             homeIFE()
-            time.sleep(2)
-            print ("5")
+            time.sleep(after_homing_delay)
+
             IFF_move_away_from_home_for_1_second()
-            print ("6")
-            time.sleep(2)
             homeIFF()
-            time.sleep(2)
-            print ("7")
+            time.sleep(after_homing_delay)
 
         if userCommand == "3":   # read Limit switches for self-test
             readLimitSwitches()
@@ -1872,9 +1938,7 @@ def main():
 # - - (Home) - - -
 
         if userCommand == "10":
-            print ("Calling home a")
             homeIFA()
-            print ("Done Calling home a")
 
         if userCommand == "20":
             homeIFB()
@@ -1926,11 +1990,13 @@ def main():
             loop_for_status = True
 
         if shortUserCommand == "42":
-            IFDsetCount(int(parameter))
+            updated_IF_D_count = check_for_Joint_D_and_E_interference(int(parameter))
+            IFDsetCount(updated_IF_D_count)
             loop_for_status = True
 
         if shortUserCommand == "52":
-            IFEsetCount(int(parameter))
+            updated_IF_E_count = check_for_Joint_E_and_D_interference(int(parameter))
+            IFEsetCount(updated_IF_E_count)
             loop_for_status = True
 
         if shortUserCommand == "62":
@@ -2088,7 +2154,7 @@ def main():
 
         if userCommand == "98":
             request_all_interface_counts()
-            time.sleep(0.2)
+            time.sleep(0.1)
             request_all_interface_status()
 
 if __name__ == '__main__':
