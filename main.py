@@ -8,14 +8,12 @@ import logging
 from adafruit_I2C_lib import I2C
 
 
-from inputimeout import inputimeout, TimeoutOccurred
+# from inputimeout import inputimeout, TimeoutOccurred
 
-##  Dec 27, 2023
+##  Dec 30, 2023
 """
 ToDo
-) Figure why command 90 is not working
-) Add joints D,E,F
-) Determine which status items are really being used.
+
 
 """
 
@@ -28,6 +26,7 @@ IF1bus = I2C(addressInterface1)
 IF2bus = I2C(addressInterface2)
 
 loop_for_status = True
+file_reading_mode = False
 error_string = "     "
 response_counter_limit = 400
 
@@ -674,269 +673,163 @@ def readLimitSwitches():
 
 #==========================================================================================
 def IFAsetAngle(angle):          ##  Three byte command and one byte Reponse
-        # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
 
-    global IFA_integer_status, IFA_status
+    global IFA_integer_status, IFA_status, IFA_angle
     global error_string
 
-    if (angle < 0) or (angle > 90):
+    angle_min = 0
+    angle_max = 65
+    count_max = 80
+
+    if (angle < angle_min):
         error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
         angle = 0
 
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 11      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand, angle, RPI2ARDexpected_response_count]  #  Data sent to arduino
+    if (angle > angle_max):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = angle_max
 
-    IF1bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    ## Convert Angle to count then call count command. Simple line equation
 
-    # print ("11 - RESPONSE:   length of list: ", len(ARD2RPIresponse1), "   List:", ARD2RPIresponse1 )
-
-    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
-        IFA_integer_status = ARD2RPIresponse1[0]
-
-
-    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
-
-    #  Command 91 is requesting status
-    last_command_complete = False
-    response_counter = 0
-    RPI2ARDcommand = 91
-    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
-    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
-        time.sleep(0.1)
-        IF1bus.writeList(register,RPI2ARDcommandList)
-        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-        last_command_complete = ARD2RPIresponse1[6]
-        response_counter = response_counter + 1
-        if (response_counter > response_counter_limit):
-            print ("ERROR LAST COMMAND NOT COMPLETED")
-            last_command_complete = True
-            
-        # print ("last_command_complete:: ", last_command_complete)
-        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+    IFA_angle = angle
+    target_count = int (angle * (count_max / angle_max))
+    
+    # print ("Input Angle: ", angle, "  Target Count: ", target_count,  "  Starting" )
+    
+    IFAsetCount(target_count)
 
 #==========================================================================================
 def IFBsetAngle(angle):           ##  Two byte command and one byte Reponse
-    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
-    global IFB_integer_status, IFB_status
+
+    global IFB_integer_status, IFB_status, IFB_angle
     global error_string
 
-    if (angle < 0) or (angle > 90):
+    angle_min = 0
+    angle_max = 360
+    count_max = 880
+
+    if (angle < angle_min):
         error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
         angle = 0
 
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 21      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    if (angle > angle_max):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = angle_max
 
-    IF1bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    ## Convert Angle to count then call count command. Simple line equation
+
+    IFB_angle = angle
+    target_count = int (angle * (count_max / angle_max))
     
-    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
-        IFB_integer_status = ARD2RPIresponse1[0]
-
-    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
-
-    #  Command 91 is requesting status
-    last_command_complete = False
-    response_counter = 0
-    RPI2ARDcommand = 91
-    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
-    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
-        time.sleep(0.1)
-        IF1bus.writeList(register,RPI2ARDcommandList)
-        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-        last_command_complete = ARD2RPIresponse1[6]
-        response_counter = response_counter + 1
-        if (response_counter > response_counter_limit):
-            print ("ERROR LAST COMMAND NOT COMPLETED")
-            last_command_complete = True
-            
-        # print ("last_command_complete:: ", last_command_complete)
-        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+    print ("Input Angle B: ", angle, "  Target Count: ", target_count,  "  Starting" )
+    
+    IFBsetCount(target_count)
 
 #==========================================================================================
 def IFCsetAngle(angle):         ##  Two byte command and one byte Reponse
-    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
-    global IFC_integer_status, IFC_status
+    global IFC_integer_status, IFC_status, IFC_angle
     global error_string
 
-    if (angle < 0) or (angle > 90):
+    angle_min = 0
+    angle_max = 140
+    count_max = 1300
+
+    if (angle < angle_min):
         error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
         angle = 0
 
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 31      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    if (angle > angle_max):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = angle_max
 
-    IF1bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
+    ## Convert Angle to count then call count command. Simple line equation
 
-    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
-        IFC_integer_status = ARD2RPIresponse1[0]
+    IFC_angle = angle
+    target_count = int (angle * (count_max / angle_max))
+    
+    print ("Input Angle C: ", angle, "  Target Count: ", target_count,  "  Starting" )
+    
+    IFCsetCount(target_count)
 
-    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
-
-    #  Command 91 is requesting status
-    last_command_complete = False
-    response_counter = 0
-    RPI2ARDcommand = 91
-    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
-    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
-        time.sleep(0.1)
-        IF1bus.writeList(register,RPI2ARDcommandList)
-        ARD2RPIresponse1 = IF1bus.readList(register, RPI2ARDexpected_response_count)
-        last_command_complete = ARD2RPIresponse1[6]
-        response_counter = response_counter + 1
-        if (response_counter > response_counter_limit):
-            print ("ERROR LAST COMMAND NOT COMPLETED")
-            last_command_complete = True
-            
-        # print ("last_command_complete:: ", last_command_complete)
-        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
 
 #==========================================================================================
 #==========================================================================================
 def IFDsetAngle(angle):          ##  Three byte command and one byte Reponse
-        # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
-
-    global IFD_integer_status, IFD_status
+    global IFD_integer_status, IFD_status, IFD_angle
     global error_string
 
-    if (angle < 0) or (angle > 90):
+    angle_min = 0
+    angle_max = 49
+    count_max = 700
+
+    if (angle < angle_min):
         error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
         angle = 0
 
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 41      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand, angle, RPI2ARDexpected_response_count]  #  Data sent to arduino
+    if (angle > angle_max):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = angle_max
 
-    IF2bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    ## Convert Angle to count then call count command. Simple line equation
 
-    # print ("11 - RESPONSE:   length of list: ", len(ARD2RPIresponse1), "   List:", ARD2RPIresponse1 )
-
-    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
-        IFD_integer_status = ARD2RPIresponse1[0]
-
-    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
-
-    #  Command 91 is requesting status
-    last_command_complete = False
-    response_counter = 0
-    RPI2ARDcommand = 91
-    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
-    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
-        time.sleep(0.1)
-        IF2bus.writeList(register,RPI2ARDcommandList)
-        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-        last_command_complete = ARD2RPIresponse1[6]
-        response_counter = response_counter + 1
-        if (response_counter > response_counter_limit):
-            print ("ERROR LAST COMMAND NOT COMPLETED")
-            last_command_complete = True
-            
-        # print ("last_command_complete:: ", last_command_complete)
-        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+    IFD_angle = angle
+    target_count = int (angle * (count_max / angle_max))
+    
+    print ("Input Angle  D: ", angle, "  Target Count: ", target_count,  "  Starting" )
+    
+    IFDsetCount(target_count)
 
 #==========================================================================================
 def IFEsetAngle(angle):           ##  Two byte command and one byte Reponse
-    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
-    global IFE_integer_status, IFE_status
+    global IFE_integer_status, IFE_status, IFE_angle
     global error_string
 
-    if (angle < 0) or (angle > 90):
+    angle_min = 0
+    angle_max = 90
+    count_max = 740
+
+    if (angle < angle_min):
         error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
         angle = 0
 
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 51      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    if (angle > angle_max):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = angle_max
 
-    IF2bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    ## Convert Angle to count then call count command. Simple line equation
+
+    IFE_angle = angle
+    target_count = int (angle * (count_max / angle_max))
     
-    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
-        IFE_integer_status = ARD2RPIresponse1[0]
-
-    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
-
-    #  Command 91 is requesting status
-    last_command_complete = False
-    response_counter = 0
-    RPI2ARDcommand = 91
-    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
-    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
-        time.sleep(0.1)
-        IF2bus.writeList(register,RPI2ARDcommandList)
-        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-        last_command_complete = ARD2RPIresponse1[6]
-        response_counter = response_counter + 1
-        if (response_counter > response_counter_limit):
-            print ("ERROR LAST COMMAND NOT COMPLETED")
-            last_command_complete = True
-            
-        # print ("last_command_complete:: ", last_command_complete)
-        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+    print ("Input Angle  E: ", angle, "  Target Count: ", target_count,  "  Starting" )
+    
+    IFEsetCount(target_count)
 
 #==========================================================================================
 def IFFsetAngle(angle):         ##  Two byte command and one byte Reponse
-    # Transfers to the Arduino include:  [ command],[angle], [Expected response size]  || [status]
-    global IFF_integer_status, IFF_status
+    global IFF_integer_status, IFF_status, IFF_angle
     global error_string
 
-    if (angle < 0) or (angle > 90):
+    angle_min = 0
+    angle_max = 170
+    count_max = 720
+
+    if (angle < angle_min):
         error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
         angle = 0
 
-    register = 0            # Not used just setting to zero
-    RPI2ARDcommand = 61      # This command
-    RPI2ARDexpected_response_count = 1  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
+    if (angle > angle_max):
+        error_string = "Angle outside of 0 to 90, setting to 2, angle is: " + str(angle)
+        angle = angle_max
 
-    IF2bus.writeList(register,RPI2ARDcommandList)
-    ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
+    ## Convert Angle to count then call count command. Simple line equation
 
-    if (ARD2RPIresponse1[0] >= 0) and (ARD2RPIresponse1[0] <= 2):
-        IFF_integer_status = ARD2RPIresponse1[0]
-
-    # While waiting for the arm to complete the action, request the counter status and "last_command_complete"
-
-    #  Command 91 is requesting status
-    last_command_complete = False
-    response_counter = 0
-    RPI2ARDcommand = 91
-    RPI2ARDexpected_response_count = 7  # count of bytes to be in the response
-    RPI2ARDcommandList = [RPI2ARDcommand,RPI2ARDexpected_response_count]  #  Data sent to arduino
-
-    while not last_command_complete:   ##  Need to send a different command than 10 while waiting. (Restarts the home)
-        time.sleep(0.1)
-        IF2bus.writeList(register,RPI2ARDcommandList)
-        ARD2RPIresponse1 = IF2bus.readList(register, RPI2ARDexpected_response_count)
-        last_command_complete = ARD2RPIresponse1[6]
-        response_counter = response_counter + 1
-        if (response_counter > response_counter_limit):
-            print ("ERROR LAST COMMAND NOT COMPLETED")
-            last_command_complete = True
-            
-        # print ("last_command_complete:: ", last_command_complete)
-        # print ("ARD2RPIresponse1: ", ARD2RPIresponse1)
+    IFF_angle = angle
+    target_count = int (angle * (count_max / angle_max))
+    
+    print ("Input Angle F: ", angle, "  Target Count: ", target_count,  "  Starting" )
+    
+    IFFsetCount(target_count)
 
 #==========================================================================================
 #==========================================================================================
@@ -1827,10 +1720,12 @@ def check_for_Joint_E_and_D_interference(target_IF_E_Count):
         revised_target_IF_E_Count = min(target_IF_E_Count, max_IF_E_Count)
 
     print ("52: Desired Shoulder value: ", target_IF_E_Count, "    Limited Shoulder value: ", revised_target_IF_E_Count)
-
-
     return revised_target_IF_E_Count 
 
+#==========================================================================================
+
+def read_commands_from_file():
+    pass
 
 #=(Main)===================================================================================
 
@@ -1840,8 +1735,20 @@ def main():
     global loop_for_status
     logging.basicConfig(filename='python_app.log')
 
+    commands_in_file = open("Arm_Commands_In_File.txt", "r")
+
+    # while commands_in_file:
+    #     print ("In Loop")
+    #     commandline = commands_in_file.readline()
+    #     print(commandline, end='')
+    #     if commandline == "":
+    #         break
+    # commands_in_file.close()
+
+
     done = False
     loop_for_status = False   #  Need to get to main menu so we can command to home.
+    file_reading_mode = False
 
     # print ("Start of While Loop")
 
@@ -1852,7 +1759,7 @@ def main():
         displaycoloredMenu()
 
         loop_for_status = False
-        if (loop_for_status):
+        if (loop_for_status):     ##  Not sure this looping code is necessary now that I'm waiting on commands to complete
             userCommand = "98"
             shortUserCommand = "98"
             loop_for_status = True
@@ -1874,8 +1781,17 @@ def main():
             #     userCommand = 'timeout'
             # # print(c)
 
-            userCommand = input(">>")
-            shortUserCommand = "98"  ## was 99    
+            if file_reading_mode: 
+                commandline = commands_in_file.readline()
+                commandline = commandline.strip()        # Get rid of trailing newline character
+                if commandline == "":
+                    file_reading_mode = False
+                    # break
+                print("Performing File Command: ", commandline)
+                userCommand = commandline
+            else:
+                userCommand = input(">>")
+                shortUserCommand = "98"  #   set to unused value    ## TOD Move to top
 
             if (len(userCommand) >= 2):
                 shortUserCommand = userCommand[0:2]
@@ -1883,6 +1799,10 @@ def main():
             if (len(userCommand) >= 4):
                 position_of_dash = userCommand.find("-")
                 parameter = userCommand[(position_of_dash+1):]
+
+        # print ("User Command Check: |",userCommand,"|")
+        # print ("Waiting 5 seconds")
+        # time.sleep(5)
 
         if (userCommand == "0") or (userCommand == "q"):
             done = True
@@ -1934,14 +1854,23 @@ def main():
             time.sleep(delay_between_commands)
             IFF_move_slowly_to_home()
 
-        
+        if userCommand == "8":   # read Limit switches for self-test
+            # read_commands_from_file()
+            file_reading_mode = True
+
+
+
 # - - (Home) - - -
 
         if userCommand == "10":
+            print ("Starting command 10")
             homeIFA()
+            print ("Done command 10")
 
         if userCommand == "20":
+            print ("Starting command 20")
             homeIFB()
+            print ("Done command 20")
 
         if userCommand == "30":
             homeIFC()
@@ -2156,6 +2085,10 @@ def main():
             request_all_interface_counts()
             time.sleep(0.1)
             request_all_interface_status()
+
+    ## End of Main While Loop
+    commands_in_file.close()
+
 
 if __name__ == '__main__':
     main()
