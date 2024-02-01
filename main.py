@@ -170,7 +170,7 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print ("%02d" % (IFA_angle), end="" )
+    print ("%03d" % (IFA_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFA_count), end="" )
     print("]  [", end="")
@@ -197,7 +197,7 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print ("%02d" % (IFB_angle), end="" )
+    print ("%03d" % (IFB_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFB_count), end="" )
     print("]  [", end="")
@@ -224,7 +224,7 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print ("%02d" % (IFC_angle), end="" )
+    print ("%03d" % (IFC_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFC_count), end="" )
     print("]  [", end="")
@@ -251,7 +251,7 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print ("%02d" % (IFD_angle), end="" )
+    print ("%03d" % (IFD_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFD_count), end="" )
     print("]  [", end="")
@@ -278,7 +278,7 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print ("%02d" % (IFE_angle), end="" )
+    print ("%03d" % (IFE_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFE_count), end="" )
     print("]  [", end="")
@@ -305,7 +305,7 @@ def displaycoloredMenu():
     print (Fore.WHITE, end="")
 
     print("] - [",        end="")
-    print ("%02d" % (IFF_angle), end="" )
+    print ("%03d" % (IFF_angle), end="" )
     print("] - [",        end="")
     print ("%05d" % (IFF_count), end="" )
     print("]  [", end="")
@@ -1692,7 +1692,7 @@ def check_for_Joint_D_and_E_interference(target_IF_D_Count):
         max_IF_D_Count = IFE_count 
         revised_target_IF_D_Count = min(target_IF_D_Count, max_IF_D_Count)
 
-    print ("42: Desired Elbow value: ", target_IF_D_Count, "    Limited Elbow value: ", revised_target_IF_D_Count)
+    # print ("42: Desired Elbow value: ", target_IF_D_Count, "    Limited Elbow value: ", revised_target_IF_D_Count)
     
     return revised_target_IF_D_Count
 
@@ -1719,7 +1719,7 @@ def check_for_Joint_E_and_D_interference(target_IF_E_Count):
         max_IF_E_Count = IFE_count 
         revised_target_IF_E_Count = min(target_IF_E_Count, max_IF_E_Count)
 
-    print ("52: Desired Shoulder value: ", target_IF_E_Count, "    Limited Shoulder value: ", revised_target_IF_E_Count)
+    # print ("52: Desired Shoulder value: ", target_IF_E_Count, "    Limited Shoulder value: ", revised_target_IF_E_Count)
     return revised_target_IF_E_Count 
 
 #==========================================================================================
@@ -1786,7 +1786,6 @@ def main():
                 commandline = commandline.strip()        # Get rid of trailing newline character
                 if commandline == "":
                     file_reading_mode = False
-                    # break
                 print("Performing File Command: ", commandline)
                 userCommand = commandline
             else:
@@ -1800,9 +1799,6 @@ def main():
                 position_of_dash = userCommand.find("-")
                 parameter = userCommand[(position_of_dash+1):]
 
-        # print ("User Command Check: |",userCommand,"|")
-        # print ("Waiting 5 seconds")
-        # time.sleep(5)
 
         if (userCommand == "0") or (userCommand == "q"):
             done = True
@@ -1863,14 +1859,10 @@ def main():
 # - - (Home) - - -
 
         if userCommand == "10":
-            print ("Starting command 10")
             homeIFA()
-            print ("Done command 10")
 
         if userCommand == "20":
-            print ("Starting command 20")
             homeIFB()
-            print ("Done command 20")
 
         if userCommand == "30":
             homeIFC()
