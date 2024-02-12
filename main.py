@@ -10,6 +10,14 @@ from adafruit_I2C_lib import I2C
 
 # from inputimeout import inputimeout, TimeoutOccurred
 
+# Arduino console 
+# python3 -m serial.tools.miniterm /dev/serial0 9600
+#
+# Enable serial port and disable console in RPI config tool
+# https://forums.raspberrypi.com/viewtopic.php?t=330169
+#  sudo apt-get install minicom
+#  Raspberry Pi -  minicom -b 9600 -o -D /dev/ttyAMA0
+
 ##  Feb 12, 2024
 # git clone https://github.com/DavidAFrederick/RhinoArmController.git
 # git pull https://github.com/DavidAFrederick/RhinoArmController.git
