@@ -10,7 +10,8 @@ from adafruit_I2C_lib import I2C
 
 # from inputimeout import inputimeout, TimeoutOccurred
 
-##  Dec 30, 2023
+##  Feb 12, 2024
+# git clone https://github.com/DavidAFrederick/RhinoArmController.git
 """
 ToDo
 
