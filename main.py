@@ -12,6 +12,7 @@ from adafruit_I2C_lib import I2C
 
 ##  Feb 12, 2024
 # git clone https://github.com/DavidAFrederick/RhinoArmController.git
+# git pull https://github.com/DavidAFrederick/RhinoArmController.git
 """
 ToDo
 
