@@ -1801,7 +1801,8 @@ def main():
                 print("Performing File Command: ", commandline)
                 userCommand = commandline
                 if looping_file_reading_mode:
-                    userCommand = "8"
+                    file_reading_mode = True
+                    # userCommand = "8"
             else:
                 userCommand = input(">>")
                 shortUserCommand = "98"  #   set to unused value    ## TOD Move to top
@@ -1870,6 +1871,7 @@ def main():
 
         if userCommand == "9":   # read Limit switches for self-test
             # read_commands_from_file()
+            file_reading_mode = True
             looping_file_reading_mode = True
 
 
