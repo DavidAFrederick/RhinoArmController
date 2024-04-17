@@ -37,6 +37,7 @@ IF2bus = I2C(addressInterface2)
 
 loop_for_status = True
 file_reading_mode = False
+looping_file_reading_mode = False
 error_string = "     "
 response_counter_limit = 400
 
@@ -326,11 +327,11 @@ def displaycoloredMenu():
 
     # print (" ")
     print (F"{Style.BRIGHT}Commands:")
-    print (F"{Style.NORMAL}Stop all                - 1")
-    print ("Home all                - 2")
-    print ("Test Home Switches      - 3")
-    print ("Find Home for all       - 5")
-    print ("Self Test All           - 6")
+    print (F"{Style.NORMAL}Stop all                - 1       |")
+    print ("Home all                - 2       |")
+    print ("Test Home Switches      - 3       |")
+    print ("Find Home for all       - 5       |      Commands from File        - 8")
+    print ("Self Test All           - 6       |      REPEAT commands from file - 9")
     print ("                             Joint Commands")
     # print (" ")
     print ("              A        B        C        D        E        F     ")
@@ -1796,8 +1797,11 @@ def main():
                 commandline = commandline.strip()        # Get rid of trailing newline character
                 if commandline == "":
                     file_reading_mode = False
+                    commands_in_file.seek(0)
                 print("Performing File Command: ", commandline)
                 userCommand = commandline
+                if looping_file_reading_mode:
+                    userCommand = "8"
             else:
                 userCommand = input(">>")
                 shortUserCommand = "98"  #   set to unused value    ## TOD Move to top
@@ -1864,6 +1868,9 @@ def main():
             # read_commands_from_file()
             file_reading_mode = True
 
+        if userCommand == "9":   # read Limit switches for self-test
+            # read_commands_from_file()
+            looping_file_reading_mode = True
 
 
 # - - (Home) - - -
